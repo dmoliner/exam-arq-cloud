@@ -1,6 +1,6 @@
-# Simulador d'Examen Perfil Cloud - Borsa de Treball DIBA
+# Simulador d'Examen Perfil Cloud
 
-Aquesta és una aplicació web senzilla i interactiva dissenyada per a la preparació de les proves de la **Borsa de Treball de Perfil Cloud** de la **Diputació de Barcelona (DIBA)**. Permet als candidats posar a prova els seus coneixements en tecnologies Cloud mitjançant simulacres d'examen de 50 preguntes seleccionades de forma aleatòria.
+Aquesta és una WebApp per a la preparació d'examens del temari d'arquitectura Cloud.Permet als candidats posar a prova els seus coneixements en tecnologies Cloud mitjançant simulacres d'examen de 50 preguntes seleccionades de forma aleatòria.
 
 ---
 
@@ -101,4 +101,3 @@ El fitxer `preguntes.js` conté el llistat d'objectes amb les preguntes de l'exa
 
 Aquesta aplicació s'ha desenvolupat com a eina acadèmica i de suport per a l'estudi personal. Les preguntes estan inspirades en les competències i conceptes clau que se solen avaluar en els perfils de sistemes en el núvol (Cloud) de les administracions públiques.
 
-Bona sort amb la preparació de les oposicions! 🚀
