@@ -3,29 +3,31 @@ let indexActual = 0;
 let respostes = new Array(50).fill(null);
 let respostesCorrectesArray = new Array(50).fill(false);
 
-// Funcions de gestió d'històric mitjançant Cookies persistents
-function obtenirStatsDiaries() {
-    const nomCookie = "simulador_diari_stats=";
-    const descodificat = decodeURIComponent(document.cookie);
-    const parts = descodificat.split(';');
-    for (let i = 0; i < parts.length; i++) {
-        let c = parts[i].trim();
-        if (c.indexOf(nomCookie) === 0) {
-            try {
-                return JSON.parse(c.substring(nomCookie.length));
-            } catch (e) {
-                console.error("Error llegint cookie", e);
-            }
+// Funcions de gestió d'històric mitjançant API REST al Servidor (global)
+async function obtenirStatsDiaries() {
+    try {
+        const response = await fetch('/api/stats');
+        if (response.ok) {
+            return await response.json();
         }
+    } catch (e) {
+        console.error("Error al obtenir stats del servidor", e);
     }
-    return {}; // Diccionari buit per defecte
+    return {}; // Diccionari buit per defecte en cas d'error o no trobat
 }
 
-function desarStatsDiaries(stats) {
-    const d = new Date();
-    d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000)); // Caduca en 365 dies (persistent)
-    const expires = "expires=" + d.toUTCString();
-    document.cookie = "simulador_diari_stats=" + encodeURIComponent(JSON.stringify(stats)) + ";" + expires + ";path=/";
+async function desarStatsDiaries(stats) {
+    try {
+        await fetch('/api/stats', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(stats)
+        });
+    } catch (e) {
+        console.error("Error al desar stats al servidor", e);
+    }
 }
 
 function dibuixarDiari(canvasId, stats) {
@@ -181,8 +183,8 @@ function dibuixarDiari(canvasId, stats) {
     });
 }
 
-function novaProva() {
-    const stats = obtenirStatsDiaries();
+async function novaProva() {
+    const stats = await obtenirStatsDiaries();
     const avui = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
     
     if (!stats[avui]) {
@@ -198,7 +200,7 @@ function novaProva() {
     stats[avui].encertsTotals += encerts;
     stats[avui].preguntesTotals += 50;
     
-    desarStatsDiaries(stats);
+    await desarStatsDiaries(stats);
     location.reload();
 }
 
@@ -371,7 +373,7 @@ function dibuixarBarres(canvasId, estadistiques) {
     });
 }
 
-function mostrarProgres() {
+async function mostrarProgres() {
     const encerts = respostesCorrectesArray.filter(v => v).length;
     const respostesDonades = respostes.filter(v => v !== null).length;
     
@@ -400,7 +402,7 @@ function mostrarProgres() {
     dibuixarBarres('barChartTemes', estadistiquesTemes);
     
     // Mostrar històric general
-    const stats = obtenirStatsDiaries();
+    const stats = await obtenirStatsDiaries();
     const dates = Object.keys(stats);
     if (dates.length === 0) {
         document.getElementById('diari-buit-progres').style.display = 'block';
@@ -458,7 +460,7 @@ document.getElementById('btn-seguent').onclick = () => {
     else { mostrarResultats(); }
 };
 
-function mostrarResultats() {
+async function mostrarResultats() {
     const encerts = respostesCorrectesArray.filter(v => v).length;
     document.getElementById('quiz-container').style.display = 'none';
     document.getElementById('progres-screen').style.display = 'none';
@@ -485,7 +487,7 @@ function mostrarResultats() {
     dibuixarBarres('barChartFinalTemes', estadistiquesTemes);
     
     // Mostrar històric general
-    const stats = obtenirStatsDiaries();
+    const stats = await obtenirStatsDiaries();
     const dates = Object.keys(stats);
     if (dates.length === 0) {
         document.getElementById('diari-buit-final').style.display = 'block';
