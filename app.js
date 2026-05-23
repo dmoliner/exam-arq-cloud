@@ -80,7 +80,8 @@ function dibuixarDiari(canvasId, stats) {
                     borderColor: '#ffffff',
                     borderWidth: 1.5,
                     borderRadius: 4,
-                    yAxisID: 'y' // Eix Y de l'esquerra
+                    yAxisID: 'y', // Eix Y de l'esquerra
+                    barThickness: 24 // Fes que la barra d'encerts no sigui tant gruixuda
                 }
             ]
         },
@@ -184,6 +185,7 @@ function dibuixarDiari(canvasId, stats) {
                         display: true,
                         text: 'nº de proves',
                         color: '#2563eb', // Color blau a joc amb la línia discontínua
+                        rotation: -90, // Gira el títol perquè es llegeixi de baix a dalt
                         font: {
                             family: "'Outfit', sans-serif",
                             size: 12,
