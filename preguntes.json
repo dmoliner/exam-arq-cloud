@@ -1,4 +1,4 @@
-const testPreguntes = [
+[
     {
         "pregunta": "1. Quin avantatge financer clau proporciona el model de Cloud Computing respecte a la infraestructura tradicional?",
         "opcions": [
@@ -1799,4 +1799,4 @@ const testPreguntes = [
         "justificacio": "Cerca el \"waste\" o recursos infrautilitzats per salvar pressupost",
         "tema": "8. Governança"
     }
-];
+]

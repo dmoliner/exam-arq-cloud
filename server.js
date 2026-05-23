@@ -48,8 +48,8 @@ app.get('/styles.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'styles.css'));
 });
 
-app.get('/preguntes.js', (req, res) => {
-    res.sendFile(path.join(__dirname, 'preguntes.js'));
+app.get('/preguntes.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'preguntes.json'));
 });
 
 app.get('/app.js', (req, res) => {

@@ -1,20 +1,36 @@
-const examen = [...testPreguntes].sort(() => 0.5 - Math.random()).slice(0, 50);
-
-// Alternar/barrejar l'ordre de les possibles respostes de cada pregunta en iniciar el test
-examen.forEach(q => {
-    const textCorrecte = q.opcions[q.respostaCorrecta];
-    // Barreja aleatòria de les opcions de la pregunta
-    q.opcions = q.opcions
-        .map(v => ({ v, r: Math.random() }))
-        .sort((a, b) => a.r - b.r)
-        .map(x => x.v);
-    // Re-calcular el nou índex de la resposta correcta
-    q.respostaCorrecta = q.opcions.indexOf(textCorrecte);
-});
-
+let examen = [];
 let indexActual = 0;
 let respostes = new Array(50).fill(null);
 let respostesCorrectesArray = new Array(50).fill(false);
+
+// Funció per carregar de forma asíncrona les preguntes del fitxer JSON i inicialitzar el test
+async function inicialitzarExamen() {
+    try {
+        const response = await fetch('preguntes.json');
+        if (!response.ok) throw new Error("No s'ha pogut descarregar el catàleg de preguntes");
+        const testPreguntes = await response.json();
+        
+        // Triar 50 preguntes aleatòries
+        examen = [...testPreguntes].sort(() => 0.5 - Math.random()).slice(0, 50);
+
+        // Alternar/barrejar l'ordre de les possibles respostes de cada pregunta en iniciar el test
+        examen.forEach(q => {
+            const textCorrecte = q.opcions[q.respostaCorrecta];
+            // Barreja aleatòria de les opcions de la pregunta
+            q.opcions = q.opcions
+                .map(v => ({ v, r: Math.random() }))
+                .sort((a, b) => a.r - b.r)
+                .map(x => x.v);
+            // Re-calcular el nou índex de la resposta correcta
+            q.respostaCorrecta = q.opcions.indexOf(textCorrecte);
+        });
+
+        carregar();
+    } catch (e) {
+        console.error("Error carregant les preguntes:", e);
+        document.getElementById('question-text').innerText = "Error en carregar les preguntes del simulador. Si us plau, recarrega la pàgina per tornar-ho a provar.";
+    }
+}
 
 // Funcions de gestió d'històric mitjançant API REST al Servidor (global)
 async function obtenirStatsDiaries() {
@@ -542,4 +558,4 @@ async function mostrarResultats() {
     }
 }
 
-carregar();
+inicialitzarExamen();
