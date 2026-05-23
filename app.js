@@ -169,23 +169,7 @@ function dibuixarDiari(canvasId, stats) {
                     type: 'linear',
                     position: 'right',
                     min: 0,
-                    display: false, // Eix secundari invisible perquè l'únic eix Y visible sigui el del percentatge
-                    ticks: {
-                        stepSize: 1,
-                        precision: 0
-                    },
-                    grid: {
-                        drawOnChartArea: false // Evita interferències de línies de quadrícula
-                    }
-                },
-                yNota: {
-                    type: 'linear',
-                    position: 'right',
-                    min: 0,
-                    max: 10,
-                    grid: {
-                        drawOnChartArea: false // Evita línies duplicades de quadrícula
-                    },
+                    display: true, // Eix secundari visible perquè es llegeixi el nombre de proves realitzades
                     ticks: {
                         color: '#475569',
                         font: {
@@ -193,19 +177,21 @@ function dibuixarDiari(canvasId, stats) {
                             weight: '600',
                             size: 10
                         },
-                        callback: function(value) {
-                            return value.toFixed(1);
-                        }
+                        stepSize: 1,
+                        precision: 0
                     },
                     title: {
                         display: true,
-                        text: 'Nota (sobre 10)',
-                        color: '#0284c7',
+                        text: 'nº de proves',
+                        color: '#2563eb', // Color blau a joc amb la línia discontínua
                         font: {
                             family: "'Outfit', sans-serif",
                             size: 12,
                             weight: '700'
                         }
+                    },
+                    grid: {
+                        drawOnChartArea: false // Evita interferències de línies de quadrícula
                     }
                 }
             }
