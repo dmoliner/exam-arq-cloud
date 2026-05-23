@@ -486,7 +486,8 @@ function carregar() {
     q.opcions.forEach((opt, i) => {
         const div = document.createElement('div');
         div.className = 'option';
-        div.innerText = opt;
+        const netText = opt.replace(/^[a-d]\)\s*/i, '');
+        div.innerText = netText;
         div.onclick = () => {
             if (respostes[indexActual] !== null) return;
             respostes[indexActual] = i;
