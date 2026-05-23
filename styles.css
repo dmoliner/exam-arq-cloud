@@ -150,6 +150,21 @@ h1 {
     user-select: none;
 }
 
+.option-radio {
+    margin-right: 0.85rem;
+    width: 1.15rem;
+    height: 1.15rem;
+    cursor: pointer;
+    accent-color: var(--color-cloud-blue);
+    flex-shrink: 0;
+    pointer-events: none; /* Deixem que el clic el gestioni el pare .option */
+}
+
+.option-text {
+    flex-grow: 1;
+}
+
+
 .option:hover {
     background: #f8fafc;
     border-color: #cbd5e1;

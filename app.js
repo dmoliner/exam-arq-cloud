@@ -486,15 +486,36 @@ function carregar() {
     q.opcions.forEach((opt, i) => {
         const div = document.createElement('div');
         div.className = 'option';
+        
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'pregunta-opcions';
+        radio.className = 'option-radio';
+        radio.id = `opt-${i}`;
+        
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'option-text';
         const netText = opt.replace(/^[a-d]\)\s*/i, '');
-        div.innerText = netText;
+        labelSpan.innerText = netText;
+        
+        div.appendChild(radio);
+        div.appendChild(labelSpan);
+        
         div.onclick = () => {
             if (respostes[indexActual] !== null) return;
             respostes[indexActual] = i;
+            radio.checked = true; // Marcar el radio-button seleccionat
+            
             const esCorrecte = (i === q.respostaCorrecta);
             respostesCorrectesArray[indexActual] = esCorrecte;
             div.classList.add(esCorrecte ? 'correct' : 'incorrect');
-            if (!esCorrecte) optionsContainer.children[q.respostaCorrecta].classList.add('correct');
+            
+            if (!esCorrecte) {
+                optionsContainer.children[q.respostaCorrecta].classList.add('correct');
+                // També cal marcar el radio-button de la resposta correcta
+                optionsContainer.children[q.respostaCorrecta].querySelector('input[type="radio"]').checked = true;
+            }
+            
             document.getElementById('justificacio-text').innerText = q.justificacio;
             document.getElementById('justificacio-container').style.display = 'block';
         };
