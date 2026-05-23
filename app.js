@@ -18,11 +18,7 @@ function obtenirStatsDiaries() {
             }
         }
     }
-    return {
-        provesFetes: 0,
-        encertsTotals: 0,
-        preguntesTotals: 0
-    };
+    return {}; // Diccionari buit per defecte
 }
 
 function desarStatsDiaries(stats) {
@@ -34,41 +30,150 @@ function desarStatsDiaries(stats) {
 
 function dibuixarDiari(canvasId, stats) {
     const ctx = document.getElementById(canvasId).getContext('2d');
-    const instanceKey = canvasId === 'donutChartProgresDiari' ? 'donutChartProgresDiariInstance' : 'donutChartFinalDiariInstance';
+    const instanceKey = canvasId === 'historicChartProgres' ? 'historicChartProgresInstance' : 'historicChartFinalInstance';
     if (window[instanceKey]) window[instanceKey].destroy();
     
-    if (stats.provesFetes === 0) return;
+    const datesOrdenades = Object.keys(stats).sort();
+    if (datesOrdenades.length === 0) return;
     
-    const encerts = stats.encertsTotals;
-    const total = stats.preguntesTotals;
+    // Convertim dates "YYYY-MM-DD" a format "DD/M" (ex: 23/5)
+    const labels = datesOrdenades.map(d => {
+        const parts = d.split('-');
+        return `${parseInt(parts[2], 10)}/${parseInt(parts[1], 10)}`;
+    });
+    
+    // Dades per al gràfic
+    const dadesPercentatge = datesOrdenades.map(d => {
+        const dayStats = stats[d];
+        return dayStats.preguntesTotals > 0 ? (dayStats.encertsTotals / dayStats.preguntesTotals) * 100 : 0;
+    });
+    
+    const dadesProves = datesOrdenades.map(d => stats[d].provesFetes);
     
     window[instanceKey] = new Chart(ctx, {
-        type: 'doughnut',
-        data: { 
-            labels: ['Encerts Acumulats', 'Errors Acumulats'], 
-            datasets: [{ 
-                data: [encerts, total - encerts], 
-                backgroundColor: ['#10b981', '#f43f5e'],
-                borderColor: '#ffffff',
-                borderWidth: 3
-            }] 
+        type: 'bar', // Tipus de base
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    type: 'line', // Línia per a proves fetes
+                    label: 'Proves Fetes',
+                    data: dadesProves,
+                    borderColor: '#2563eb', // Blau elèctric
+                    borderWidth: 2,
+                    borderDash: [5, 5], // Línia de punts/traços
+                    pointBackgroundColor: '#2563eb',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 1.5,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    fill: false,
+                    yAxisID: 'yProves' // Eix Y de la dreta
+                },
+                {
+                    type: 'bar', // Barres per a encerts (%)
+                    label: 'Encerts (%)',
+                    data: dadesPercentatge,
+                    backgroundColor: '#10b981', // Verd maragda
+                    borderColor: '#ffffff',
+                    borderWidth: 1.5,
+                    borderRadius: 4,
+                    yAxisID: 'y' // Eix Y de l'esquerra
+                }
+            ]
         },
-        options: { 
-            cutout: '75%', 
+        options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        color: '#0284c7',
+                        color: '#475569',
                         font: {
+                            family: "'Outfit', sans-serif",
                             size: 11,
                             weight: '600'
                         },
-                        padding: 12,
                         usePointStyle: true,
                         pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                    titleFont: { family: 'Outfit', size: 12, weight: 'bold' },
+                    bodyFont: { family: 'Outfit', size: 12 },
+                    padding: 10,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.dataset.type === 'line') {
+                                label += context.parsed.y + ' ' + (context.parsed.y === 1 ? 'prova' : 'proves');
+                            } else {
+                                label += Math.round(context.parsed.y) + '%';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#475569',
+                        font: {
+                            family: "'Outfit', sans-serif",
+                            weight: '600'
+                        }
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    min: 0,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        color: '#475569',
+                        font: {
+                            family: "'Outfit', sans-serif",
+                            weight: '600',
+                            size: 10
+                        },
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Encerts (%)',
+                        color: '#10b981',
+                        font: {
+                            family: "'Outfit', sans-serif",
+                            size: 12,
+                            weight: '700'
+                        }
+                    }
+                },
+                yProves: {
+                    type: 'linear',
+                    position: 'right',
+                    min: 0,
+                    display: false, // Eix secundari invisible perquè l'únic eix Y visible sigui el del percentatge
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0
+                    },
+                    grid: {
+                        drawOnChartArea: false // Evita interferències de línies de quadrícula
                     }
                 }
             }
@@ -78,11 +183,20 @@ function dibuixarDiari(canvasId, stats) {
 
 function novaProva() {
     const stats = obtenirStatsDiaries();
-    const encerts = respostesCorrectesArray.filter(v => v).length;
+    const avui = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
     
-    stats.provesFetes += 1;
-    stats.encertsTotals += encerts;
-    stats.preguntesTotals += 50;
+    if (!stats[avui]) {
+        stats[avui] = {
+            provesFetes: 0,
+            encertsTotals: 0,
+            preguntesTotals: 0
+        };
+    }
+    
+    const encerts = respostesCorrectesArray.filter(v => v).length;
+    stats[avui].provesFetes += 1;
+    stats[avui].encertsTotals += encerts;
+    stats[avui].preguntesTotals += 50;
     
     desarStatsDiaries(stats);
     location.reload();
@@ -245,17 +359,6 @@ function dibuixarBarres(canvasId, estadistiques) {
                 },
                 y: {
                     stacked: true,
-                    title: {
-                        display: true,
-                        text: 'Rendiment per Temes', // El títol de l'eix Y és el títol del gràfic
-                        color: '#0284c7',
-                        font: {
-                            family: "'Outfit', sans-serif",
-                            size: 13, // Mida continguda del títol del gràfic
-                            weight: '800'
-                        },
-                        padding: { bottom: 12 }
-                    },
                     grid: {
                         display: false
                     },
@@ -296,18 +399,28 @@ function mostrarProgres() {
     });
     dibuixarBarres('barChartTemes', estadistiquesTemes);
     
-    // Mostrar històric diari
+    // Mostrar històric general
     const stats = obtenirStatsDiaries();
-    if (stats.provesFetes === 0) {
+    const dates = Object.keys(stats);
+    if (dates.length === 0) {
         document.getElementById('diari-buit-progres').style.display = 'block';
         document.getElementById('diari-grafic-wrapper-progres').style.display = 'none';
     } else {
         document.getElementById('diari-buit-progres').style.display = 'none';
         document.getElementById('diari-grafic-wrapper-progres').style.display = 'flex';
-        dibuixarDiari('donutChartProgresDiari', stats);
+        dibuixarDiari('historicChartProgres', stats);
         
-        const percentatgeAvui = ((stats.encertsTotals / stats.preguntesTotals) * 100).toFixed(1);
-        document.getElementById('proves-fetes-text-progres').innerHTML = `<b>${stats.provesFetes}</b> ${stats.provesFetes === 1 ? 'prova feta' : 'proves fetes'} &nbsp;|&nbsp; Mitjana: <b>${percentatgeAvui}% encerts</b>`;
+        let totalProves = 0;
+        let totalEncerts = 0;
+        let totalPreguntes = 0;
+        dates.forEach(d => {
+            totalProves += stats[d].provesFetes;
+            totalEncerts += stats[d].encertsTotals;
+            totalPreguntes += stats[d].preguntesTotals;
+        });
+        
+        const percentatgeGlobal = totalPreguntes > 0 ? ((totalEncerts / totalPreguntes) * 100).toFixed(1) : 0;
+        document.getElementById('proves-fetes-text-progres').innerHTML = `<b>${totalProves}</b> ${totalProves === 1 ? 'prova feta' : 'proves fetes'} &nbsp;|&nbsp; Mitjana: <b>${percentatgeGlobal}% encerts</b>`;
     }
 }
 
@@ -371,18 +484,28 @@ function mostrarResultats() {
     });
     dibuixarBarres('barChartFinalTemes', estadistiquesTemes);
     
-    // Mostrar històric diari
+    // Mostrar històric general
     const stats = obtenirStatsDiaries();
-    if (stats.provesFetes === 0) {
+    const dates = Object.keys(stats);
+    if (dates.length === 0) {
         document.getElementById('diari-buit-final').style.display = 'block';
         document.getElementById('diari-grafic-wrapper-final').style.display = 'none';
     } else {
         document.getElementById('diari-buit-final').style.display = 'none';
         document.getElementById('diari-grafic-wrapper-final').style.display = 'flex';
-        dibuixarDiari('donutChartFinalDiari', stats);
+        dibuixarDiari('historicChartFinal', stats);
         
-        const percentatgeAvui = ((stats.encertsTotals / stats.preguntesTotals) * 100).toFixed(1);
-        document.getElementById('proves-fetes-text-final').innerHTML = `<b>${stats.provesFetes}</b> ${stats.provesFetes === 1 ? 'prova feta' : 'proves fetes'} &nbsp;|&nbsp; Mitjana: <b>${percentatgeAvui}% encerts</b>`;
+        let totalProves = 0;
+        let totalEncerts = 0;
+        let totalPreguntes = 0;
+        dates.forEach(d => {
+            totalProves += stats[d].provesFetes;
+            totalEncerts += stats[d].encertsTotals;
+            totalPreguntes += stats[d].preguntesTotals;
+        });
+        
+        const percentatgeGlobal = totalPreguntes > 0 ? ((totalEncerts / totalPreguntes) * 100).toFixed(1) : 0;
+        document.getElementById('proves-fetes-text-final').innerHTML = `<b>${totalProves}</b> ${totalProves === 1 ? 'prova feta' : 'proves fetes'} &nbsp;|&nbsp; Mitjana: <b>${percentatgeGlobal}% encerts</b>`;
     }
 }
 

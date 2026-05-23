@@ -70,11 +70,9 @@
         <div id="diari-buit-progres" class="diari-buit-box" style="display: none;">
             Encara no has finalitzat cap prova. El teu històric de puntuacions s'anirà acumulant aquí!
         </div>
-        <div id="diari-grafic-wrapper-progres" class="diari-wrapper">
-            <div class="chart-wrapper">
-                <div class="chart-container">
-                    <canvas id="donutChartProgresDiari"></canvas>
-                </div>
+        <div id="diari-grafic-wrapper-progres" class="diari-wrapper" style="width: 100%;">
+            <div class="historic-chart-container">
+                <canvas id="historicChartProgres"></canvas>
             </div>
             <div id="proves-fetes-text-progres" class="proves-fetes-badge"></div>
         </div>
@@ -111,11 +109,9 @@
         <div id="diari-buit-final" class="diari-buit-box" style="display: none;">
             Aquesta és la teva primera prova! Prem "Nova prova" per començar a acumular el teu històric general.
         </div>
-        <div id="diari-grafic-wrapper-final" class="diari-wrapper">
-            <div class="chart-wrapper">
-                <div class="chart-container">
-                    <canvas id="donutChartFinalDiari"></canvas>
-                </div>
+        <div id="diari-grafic-wrapper-final" class="diari-wrapper" style="width: 100%;">
+            <div class="historic-chart-container">
+                <canvas id="historicChartFinal"></canvas>
             </div>
             <div id="proves-fetes-text-final" class="proves-fetes-badge"></div>
         </div>

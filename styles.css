@@ -385,6 +385,13 @@ button:hover .icon-right {
     margin-bottom: 2rem;
 }
 
+.historic-chart-container {
+    width: 100%;
+    height: 250px;
+    position: relative;
+    margin: 1.5rem 0;
+}
+
 /* Responsive Rules */
 @media (max-width: 600px) {
     body {
