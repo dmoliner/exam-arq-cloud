@@ -177,6 +177,36 @@ function dibuixarDiari(canvasId, stats) {
                     grid: {
                         drawOnChartArea: false // Evita interferències de línies de quadrícula
                     }
+                },
+                yNota: {
+                    type: 'linear',
+                    position: 'right',
+                    min: 0,
+                    max: 10,
+                    grid: {
+                        drawOnChartArea: false // Evita línies duplicades de quadrícula
+                    },
+                    ticks: {
+                        color: '#475569',
+                        font: {
+                            family: "'Outfit', sans-serif",
+                            weight: '600',
+                            size: 10
+                        },
+                        callback: function(value) {
+                            return value.toFixed(1);
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Nota (sobre 10)',
+                        color: '#0284c7',
+                        font: {
+                            family: "'Outfit', sans-serif",
+                            size: 12,
+                            weight: '700'
+                        }
+                    }
                 }
             }
         }
