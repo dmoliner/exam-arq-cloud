@@ -1,4 +1,17 @@
 const examen = [...testPreguntes].sort(() => 0.5 - Math.random()).slice(0, 50);
+
+// Alternar/barrejar l'ordre de les possibles respostes de cada pregunta en iniciar el test
+examen.forEach(q => {
+    const textCorrecte = q.opcions[q.respostaCorrecta];
+    // Barreja aleatòria de les opcions de la pregunta
+    q.opcions = q.opcions
+        .map(v => ({ v, r: Math.random() }))
+        .sort((a, b) => a.r - b.r)
+        .map(x => x.v);
+    // Re-calcular el nou índex de la resposta correcta
+    q.respostaCorrecta = q.opcions.indexOf(textCorrecte);
+});
+
 let indexActual = 0;
 let respostes = new Array(50).fill(null);
 let respostesCorrectesArray = new Array(50).fill(false);
