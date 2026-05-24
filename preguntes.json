@@ -2998,5 +2998,605 @@
         "respostaCorrecta": 1,
         "justificacio": "L'eina de creació de Custom Roles és la màxima expressió madura del 'Least Privilege Principle' (Privilegi Mínim possible de base lligat Zero Trust corporatiu) estandard a la governança. Si la necessitat d'operacions (O&M) interna cau i no quadra o és inferior que res del que aportin els milers de rols empaquetats de base preexistents (els 'Built-In'), crear amb arxiu una combinació exacta de drets només a petició precisa i específica tancada aporta el nivell i condició de governança professional més estricta permesa en auditories tancades i exigida al nivell AZ-104 base, evitant forçar l'ús obert de rols generals que posin a risc àrees contigües no-requerides obrint espais amagats lliurement al factor error formals de producció.",
         "tema": "2. Identitat i accés"
+    },
+    {
+        "pregunta": "251. Quina és la principal diferència entre l'escalat vertical (Scale up) i l'escalat horitzontal (Scale out) en la computació al núvol d'Azure?",
+        "opcions": [
+            "a) L'escalat vertical afegeix més instàncies (màquines), mentre que l'horitzontal augmenta la mida del disc dur.",
+            "b) L'escalat vertical augmenta la potència d'una màquina existent (més CPU/RAM), mentre que l'horitzontal afegeix més instàncies de màquines per repartir la càrrega.",
+            "c) Són exactament el mateix, només canvia el nom segons el servei (IaaS o PaaS).",
+            "d) L'escalat horitzontal requereix temps d'inactivitat (downtime), l'escalat vertical no."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "L'escalat vertical (Scale up) implica canviar a una mida de màquina virtual més gran (requereix reinici). L'escalat horitzontal (Scale out) afegeix noves màquines al conjunt (com als VM Scale Sets) per distribuir el trànsit sense temps d'inactivitat.",
+        "tema": "1. Fonaments"
+    },
+    {
+        "pregunta": "252. En el cas d'un incompliment del SLA (Service Level Agreement) per part de Microsoft, com es compensa normalment al client?",
+        "opcions": [
+            "a) Amb un reemborsament directe en efectiu al compte bancari.",
+            "b) Amb crèdits de servei que es descompten de la propera factura d'Azure.",
+            "c) Oferint serveis de nivell superior (ex: canvi de Standard a Premium) gratuïtament de per vida.",
+            "d) No hi ha compensació, el SLA només és una estimació de rendiment."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "Si Azure no assoleix els nivells de disponibilitat garantits al SLA, s'atorga un percentatge de la tarifa mensual del servei afectat en forma de crèdits de servei per a factures futures.",
+        "tema": "1. Fonaments"
+    },
+    {
+        "pregunta": "253. Quin model de desplegament al núvol utilitza Azure Arc per permetre a la Diputació gestionar simultàniament servidors físics locals i recursos a Azure?",
+        "opcions": [
+            "a) Núvol Privat (Private Cloud).",
+            "b) Núvol Híbrid (Hybrid Cloud).",
+            "c) Núvol Comunitari (Community Cloud).",
+            "d) SaaS Exclusiu."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "El Núvol Híbrid combina infraestructures públiques (com Azure) amb centres de dades privats o locals (On-Premise). Azure Arc és l'eina de gestió que facilita i unifica aquesta hibridació.",
+        "tema": "1. Fonaments"
+    },
+    {
+        "pregunta": "254. Què es requereix com a mínim per crear un compte a Microsoft Entra ID?",
+        "opcions": [
+            "a) Un servidor Windows Server físic.",
+            "b) Una llicència d'Azure Premium P2.",
+            "c) Un inquilí (Tenant) base, que és l'entitat que representa l'organització.",
+            "d) Una targeta de crèdit, ja que no hi ha versió gratuïta."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "Un tenant és la instància dedicada i aïllada de Microsoft Entra ID que es crea automàticament quan una organització es registra en un servei al núvol de Microsoft (com Azure o Microsoft 365). Entra ID té una versió gratuïta base.",
+        "tema": "2. Identitat i accés"
+    },
+    {
+        "pregunta": "255. Quina de les següents NO és una afirmació vàlida sobre les Identitats Administrades (Managed Identities) a Azure?",
+        "opcions": [
+            "a) Les identitats administrades eliminen la necessitat de guardar contrasenyes o secrets al codi font.",
+            "b) Són gestionades automàticament per Microsoft Entra ID.",
+            "c) Permeten als desenvolupadors utilitzar certificats propis generats localment per autenticar la identitat.",
+            "d) Es poden utilitzar per atorgar a una App Service accés a un Key Vault."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "La bellesa de les Managed Identities és que Azure gestiona completament la creació, rotació i protecció dels certificats i credencials subjacent. El desenvolupador no interactua mai amb els certificats de la identitat administrada.",
+        "tema": "2. Identitat i accés"
+    },
+    {
+        "pregunta": "256. Has d'assignar un rol a un usuari perquè pugui gestionar els tiquets de suport de la subscripció, però sense poder crear ni modificar recursos IaaS. Quin tipus de governança apliques?",
+        "opcions": [
+            "a) Una Azure Policy de denegació.",
+            "b) El model d'autenticació multifactor (MFA).",
+            "c) Control d'Accés Basat en Rols (RBAC) seleccionant un rol específic com 'Support Request Contributor'.",
+            "d) Un Resource Lock de tipus ReadOnly."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "L'RBAC permet aplicar el principi del mínim privilegi assignant rols que tenen accions molt concretes i delimitades, com crear tiquets de suport, sense atorgar drets administratius sobre la infraestructura.",
+        "tema": "2. Identitat i accés"
+    },
+    {
+        "pregunta": "257. Quan es dissenya una solució d'autenticació per a una aplicació orientada al ciutadà on els usuaris han de poder registrar-se amb els seus comptes de Facebook, Google o un correu personal, quin servei d'identitat d'Azure és l'adequat?",
+        "opcions": [
+            "a) Azure AD B2B (Business to Business).",
+            "b) Azure AD B2C (Business to Consumer).",
+            "c) Azure AD Domain Services.",
+            "d) Microsoft Entra Connect."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "B2C (Business to Consumer) està dissenyat precisament per a identitats de clients externs, permetent el registre amb xarxes socials i comptes personals (White-labeling), mantenint aquests usuaris separats del directori d'empleats de l'organització.",
+        "tema": "2. Identitat i accés"
+    },
+    {
+        "pregunta": "258. Si una màquina virtual (VM) utilitza emmagatzematge Premium SSD, què significa la funcionalitat de 'Bursting' (Ràfegues)?",
+        "opcions": [
+            "a) La capacitat d'emmagatzematge en GBs creix dinàmicament quan el disc s'omple.",
+            "b) Permet que el rendiment del disc (IOPS i ample de banda) superi temporalment el límit aprovisionat per gestionar pics de trànsit sense costos extra de canvi de disc.",
+            "c) Significa que el disc dur fa còpies de seguretat més ràpid.",
+            "d) Transfereix dades automàticament de HDD a SSD."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "El Credit-based Bursting permet a discos més petits acumular crèdits quan no utilitzen tot el seu rendiment per, posteriorment, gastar-los oferint altes velocitats d'I/O en pics de demanda (com a l'arrencada de la màquina).",
+        "tema": "3. Recursos d'Azure"
+    },
+    {
+        "pregunta": "259. Tens un grup de 10 màquines virtuals web dins d'un 'Availability Set' (Conjunt de disponibilitat). Azure garanteix que els recursos estiguin distribuïts en diferents 'Fault Domains' (Dominis de fallada). Què representa un Fault Domain?",
+        "opcions": [
+            "a) Una regió geogràfica completament diferent.",
+            "b) Un grup de nodes físics (servidors) que comparteixen la mateixa font d'alimentació i el mateix commutador (switch) de xarxa.",
+            "c) Un sistema de còpia de seguretat diària.",
+            "d) Una separació de sistema operatiu (Linux vs Windows)."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "Els Dominis de Fallada (Fault Domains) defineixen la separació física del maquinari. Separar les VMs en diferents Fault Domains assegura que una fallada en un rack de servidors (tall d'energia o switch trencat) no apagui tota la teva aplicació alhora.",
+        "tema": "3. Recursos d'Azure"
+    },
+    {
+        "pregunta": "260. Quina és la mida màxima aproximada d'arxiu que pot suportar un únic compte de Blob Storage d'Azure en configuració de Blob de Blocs (Block Blob)?",
+        "opcions": [
+            "a) 2 GB.",
+            "b) 500 GB.",
+            "c) 4.75 TB.",
+            "d) 190 TB aproximadament."
+        ],
+        "respostaCorrecta": 3,
+        "justificacio": "Un únic Block Blob pot emmagatzemar aproximadament fins a 190,7 TB de dades (basat en blocs de 4000 MB), cosa que el fa ideal per a emmagatzematge massiu d'imatges, vídeos i dades de còpia de seguretat.",
+        "tema": "3. Recursos d'Azure"
+    },
+    {
+        "pregunta": "261. A Azure Kubernetes Service (AKS), com s'anomena la unitat mínima desplegable que normalment allotja un o més contenidors Docker fortament acoblats?",
+        "opcions": [
+            "a) Node.",
+            "b) Clúster.",
+            "c) Pod.",
+            "d) Deployment."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "A Kubernetes, un 'Pod' és l'element atòmic i la unitat d'execució més petita. Modela un 'host lògic' per a un o diversos contenidors que comparteixen emmagatzematge i xarxa.",
+        "tema": "3. Recursos d'Azure"
+    },
+    {
+        "pregunta": "262. En el disseny de xarxes (VNet), quina és la regla principal per poder configurar amb èxit un VNet Peering entre la VNet A i la VNet B?",
+        "opcions": [
+            "a) Han d'estar a la mateixa subscripció.",
+            "b) Han de tenir un Azure Firewall enmig.",
+            "c) Els espais d'adreces IP de les dues VNets no es poden superposar (Overlap).",
+            "d) Han de pertànyer obligatòriament a la mateixa regió d'Azure."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "Si la VNet A utilitza l'espai 10.0.0.0/16 i la VNet B també utilitza 10.0.0.0/16 (overlap), el peering fallarà perquè els encaminadors no sabran on enviar el trànsit. Els espais d'IPs han de ser únics. Es permet fer peering entre diferents regions (Global VNet Peering) i subscripcions.",
+        "tema": "3. Recursos d'Azure"
+    },
+    {
+        "pregunta": "263. Quin servei proporciona connectivitat d'escriptori virtual (VDI) totalment gestionada, permetent als empleats de la Diputació accedir a Windows 10/11 i aplicacions des de qualsevol dispositiu de forma segura?",
+        "opcions": [
+            "a) Azure Bastion.",
+            "b) Azure Virtual Desktop (AVD).",
+            "c) Azure App Service.",
+            "d) Remote Desktop Protocol (RDP) obert per NSG."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "Azure Virtual Desktop és l'oferta de virtualització d'escriptoris al núvol. Inclou l'experiència de Windows 11 multi-sessió i està optimitzat nativament per al paquet de Microsoft 365.",
+        "tema": "3. Recursos d'Azure"
+    },
+    {
+        "pregunta": "264. En l'anàlisi de Monitoratge, què és i quina funció fa el 'Log Analytics Agent' (o el seu successor, l'Azure Monitor Agent - AMA)?",
+        "opcions": [
+            "a) És un servei al núvol que genera gràfics financers.",
+            "b) És un petit programari (agent) que s'instal·la dins del sistema operatiu de les màquines virtuals per recopilar i enviar els logs d'esdeveniments i mètriques cap al Log Analytics Workspace.",
+            "c) És l'antivirus per defecte de Windows Server a Azure.",
+            "d) És un protocol de xarxa."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "Azure pot monitoritzar la 'caixa negra' de la VM des de fora (CPU genèrica, xarxa), però per entendre què passa *a dins* del sistema operatiu (ex: errors de registre de Windows (Event Viewer) o fitxers Syslog de Linux), necessita l'Agent instal·lat.",
+        "tema": "4. Monitoratge"
+    },
+    {
+        "pregunta": "265. Un grup d'acció (Action Group) a Azure Monitor s'activa quan es dispara una alerta de consum de CPU. Quines de les següents accions POT fer el grup d'acció?",
+        "opcions": [
+            "a) Només enviar correus electrònics.",
+            "b) Enviar correus, SMS, trucades de veu, cridar a un Webhook o invocar una Funció d'Azure (Azure Function).",
+            "c) Modificar l'arquitectura del codi font de l'aplicació per fer-la més eficient.",
+            "d) Contactar directament amb el suport tècnic de Microsoft."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "Els Action Groups són molt flexibles i permeten una resposta automatitzada rica, no només notificant (SMS, Email, Push), sinó executant processos IT (Logic Apps, Runbooks, Webhooks) per auto-remediar el problema.",
+        "tema": "4. Monitoratge"
+    },
+    {
+        "pregunta": "266. Volem dissenyar una aplicació altament resilient basant-nos en el patró Event-Driven. Tenim un servei que rep comandes, i un que les processa. Si el segon servei cau, volem que l'ordre romangui guardada durant 7 dies fins que el servei revisqui i la consumeixi. Què utilitzem?",
+        "opcions": [
+            "a) Azure Event Grid.",
+            "b) Azure Service Bus o Storage Queues.",
+            "c) Azure Cache for Redis.",
+            "d) Azure ExpressRoute."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "A diferència d'Event Grid (que està pensat per disparar esdeveniments instantanis), Service Bus és un 'broker' de missatgeria empresarial. Reté els missatges a la cua fins que el consumidor els llegeix i confirma la recepció (desacoblament asíncron tolerant a fallades).",
+        "tema": "5. Disseny i Arquitectura"
+    },
+    {
+        "pregunta": "267. Quan es desplega infraestructura com a codi (IaaC) utilitzant el format Bicep en comptes de JSON pur, quin és l'avantatge principal per a l'arquitecte?",
+        "opcions": [
+            "a) Bicep és processat directament pel processador físic de les VMs.",
+            "b) Bicep és exclusiu per a usuaris de Linux.",
+            "c) Ofereix una sintaxi més neta, concisa, llegible per a humans i inclou verificació de tipus, sent compilat automàticament cap a plantilles ARM JSON durant el desplegament.",
+            "d) Evita que es cobri la tarifa de desplegament a Azure."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "Bicep és un llenguatge de domini específic (DSL) dissenyat precisament per resoldre la verbositat i complexitat de les plantilles ARM JSON, oferint una experiència de desenvolupament molt més moderna, sense cap cost associat.",
+        "tema": "5. Disseny i Arquitectura"
+    },
+    {
+        "pregunta": "268. En el disseny d'una zona d'aterratge (Landing Zone) corporativa d'àmbit governamental, on se sol·locarà idealment el registre d'auditoria centralitzat (Log Analytics Workspace) de retenció de dades a llarg termini?",
+        "opcions": [
+            "a) Cadascun dels 'Spokes' o subscripcions departamentals crearà el seu propi Log Analytics independent sense connexió.",
+            "b) En una subscripció dedicada de 'Management' o 'Plataforma' governada centralment per l'equip de Seguretat/TI.",
+            "c) Dins de l'Azure App Service de l'aplicació web.",
+            "d) Només als servidors físics locals (On-Premise) per llei."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "L'arquitectura a escala empresarial (Cloud Adoption Framework) prescriu centralitzar l'auditoria, la xarxa i la identitat en subscripcions de Plataforma base, permetent als equips de seguretat visualitzar tota la telemetria sense que els desenvolupadors dels 'Spokes' puguin esborrar els logs.",
+        "tema": "5. Disseny i Arquitectura"
+    },
+    {
+        "pregunta": "269. En relació amb els patrons Cloud-Native, què significa que una aplicació sigui 'Stateless' (Sense Estat)?",
+        "opcions": [
+            "a) Que no utilitza cap governança ni normativa legal.",
+            "b) Que l'aplicació no depèn dels servidors d'Azure.",
+            "c) Que la màquina o el contenidor que executa el codi no guarda les dades de sessió localment a la seva RAM o disc dur, sinó que es guarden a un sistema extern compartit (com Redis o SQL), permetent apagar i encendre màquines lliurement per escalar.",
+            "d) Que utilitza bases de dades NoSQL en lloc de SQL."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "Les aplicacions 'stateless' són la clau per a l'escalat elàstic. Com que no depenen de l'emmagatzematge de dades al mateix node on s'executen, pots afegir o destruir instàncies (ex: Spot VMs, o Scale Sets) sense perdre el treball dels usuaris actius.",
+        "tema": "5. Disseny i Arquitectura"
+    },
+    {
+        "pregunta": "270. Si s'ha d'implementar un servei cognitiu (Azure AI) capaç de realitzar anàlisis de sentiments en temps real dels correus que els ciutadans envien a l'Ajuntament (detectar si estan enfadats o satisfets), quin servei cal utilitzar?",
+        "opcions": [
+            "a) Azure Bot Service.",
+            "b) Azure AI Language (Anteriorment Text Analytics / LUIS).",
+            "c) Azure AI Vision.",
+            "d) Azure Document Intelligence."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "Azure AI Language proporciona processament de llenguatge natural (NLP) clàssic (extracció de frases clau, anàlisi de sentiments, detecció d'idioma) mitjançant crides a l'API sense necessitat d'entrenar models propis generatius grans.",
+        "tema": "6. IA"
+    },
+    {
+        "pregunta": "271. Què aporta un esquema d'Intel·ligència Artificial 'Multimodal' generatiu a l'ecosistema d'Azure (com GPT-4o)?",
+        "opcions": [
+            "a) Que només processa dades si són estructurades en format SQL i Excel alhora.",
+            "b) Capacitat per processar i comprendre de forma nativa text, imatges, àudio i vídeo dins del mateix model, en comptes d'utilitzar models separats per a cada funció.",
+            "c) Que pot estar allotjat en diversos núvols (AWS, GCP) alhora.",
+            "d) Que no requereix cap dada d'entrenament."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "La multimodalitat és la revolució dels nous models fundacionals: poden analitzar una foto d'un problema tècnic, entendre'n l'àudio explicatiu i generar una resposta en text combinant totes les fonts de dades d'entrada en el mateix raonament.",
+        "tema": "6. IA"
+    },
+    {
+        "pregunta": "272. A Azure AI Foundry, què és i per a què serveix un 'Content Filter' (Filtre de Contingut) de seguretat?",
+        "opcions": [
+            "a) És un filtre que evita atacs de xarxa DDoS cap al model d'IA.",
+            "b) És un mecanisme per evitar atacs d'injecció de codi SQL a través de les peticions a la base de dades.",
+            "c) Avalua de forma síncrona els 'prompts' de l'usuari i les respostes de l'IA per bloquejar categories de risc (odi, violència, autolesió, material sexual) abans que es lliurin.",
+            "d) Restringeix les IPs que es poden connectar al model."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "En IA Generativa, la seguretat (Azure AI Content Safety) s'assegura situant filtres (guardrails) en temps real entre l'usuari i el model per evitar al·lucinacions perilloses, 'Jailbreaks' o generació de contingut tòxic.",
+        "tema": "6. IA"
+    },
+    {
+        "pregunta": "273. Si un usuari repeteix constantment intents d'inici de sessió fallits a l'Active Directory des de diverses IPs internacionals, quin servei prèmium de seguretat avaluarà aquest comportament, elevarà el nivell de risc de l'usuari i pot forçar un canvi de contrasenya automàtic?",
+        "opcions": [
+            "a) Azure Firewall.",
+            "b) Microsoft Entra Identity Protection.",
+            "c) Azure Key Vault.",
+            "d) Network Security Group (NSG)."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "Identity Protection utilitza la IA de Microsoft per detectar anomalies als inicis de sessió (Impossible Travel, IPs anònimes, contrasenyes filtrades). S'integra directament amb l'Accés Condicional per demanar MFA o bloquejar automàticament usuaris compromesos.",
+        "tema": "7. Seguretat"
+    },
+    {
+        "pregunta": "274. Dins el model de Defensa en Profunditat (Defense in Depth), quina és sempre l'última capa de protecció i el focus fonamental que l'arquitecte ha de protegir?",
+        "opcions": [
+            "a) La xarxa (Networking).",
+            "b) El perímetre d'Internet (DDoS).",
+            "c) Les Dades (Data).",
+            "d) El maquinari físic (Physical security)."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "Les dades (documents, bases de dades corporatives) són el centre del model de seguretat de l'anell. Si un atacant supera la seguretat perimetral, la de xarxa, l'ordinador amfitrió i l'aplicació, el xifrat i l'aïllament de la dada (Data Encryption at Rest) és l'última línia de defensa.",
+        "tema": "7. Seguretat"
+    },
+    {
+        "pregunta": "275. Per què és perillós guardar secrets o credencials com a Text Pla (Plain Text) dins de l'arxiu de configuració de l'App Service ('appsettings.json'), fins i tot si aquest servei és privat?",
+        "opcions": [
+            "a) Perquè l'App Service s'aturarà de funcionar per incompliment de format JSON.",
+            "b) Perquè Azure l'esborra automàticament cada mes.",
+            "c) Si el repositori de codi es filtra o qualsevol desenvolupador amb accés de lectura a la plataforma hi accedeix, els secrets estaran totalment exposats, facilitant l'accés lateral a dades crítiques. S'ha d'utilitzar Key Vault.",
+            "d) No és perillós, és una pràctica acceptada en el Cloud modern."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "Emmagatzemar secrets en codi pla vulnera els principis d'arquitectura segura. El mètode correcte és posar al fitxer de configuració una 'Referència' (URL) cap a l'Azure Key Vault, des d'on s'extreu el secret xifrat en memòria durant l'execució.",
+        "tema": "7. Seguretat"
+    },
+    {
+        "pregunta": "276. Si desplegues un Azure Firewall al centre (Hub) de la teva arquitectura de xarxa, quina acció addicional és absolutament indispensable a les subxarxes (Spokes) perquè el trànsit passi realment pel tallafocs?",
+        "opcions": [
+            "a) Eliminar els NSGs de les subxarxes.",
+            "b) Configurar una Taula de Rutes (UDR - User Defined Route) a les subxarxes 'Spokes' que obligui a redirigir el trànsit cap a la IP privada del Firewall com a 'Next Hop' (Salt següent).",
+            "c) Configurar un Application Gateway frontal.",
+            "d) Contractar Azure ExpressRoute obligatòriament."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "El simple fet de crear un Firewall no altera l'enrutament per defecte de les VNets d'Azure. Cal forçar explícitament (sobreescriure) l'enrutament del sistema mitjançant UDRs perquè tot el trànsit d'Internet i intern s'inspecti obligatòriament al Firewall.",
+        "tema": "7. Seguretat"
+    },
+    {
+        "pregunta": "277. Dins d'Azure Policy, quin és l'efecte utilitzat quan l'objectiu no és bloquejar (Deny), ni arreglar (DeployIfNotExists), sinó que l'administració central vol generar un avís a l'informe d'auditoria si detecta que falta una configuració (per exemple, les còpies de seguretat)?",
+        "opcions": [
+            "a) Modify.",
+            "b) Disabled.",
+            "c) Audit (o AuditIfNotExists).",
+            "d) Delete."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "L'efecte d'Auditoria permet visualitzar l'incompliment corporatiu en el tauler global (governança passiva) sense causar interrupcions en les operacions diàries dels desenvolupadors.",
+        "tema": "8. Governança"
+    },
+    {
+        "pregunta": "278. Quin tipus de governança apliques si crees un Management Group arrel que bloqueja recursos fora d'Europa i un sub-Management Group per al departament legal que obliga a xifrat doble. Què passarà amb una VM creada dins d'aquest sub-grup?",
+        "opcions": [
+            "a) Només complirà la regla del xifratge doble (la més propera al recurs).",
+            "b) Només complirà la regla d'Europa (la regla arrel sobreescriu les altres).",
+            "c) Heretarà ambdues normatives; el desplegament només tindrà èxit si la VM es crea a Europa I té el xifrat doble activat.",
+            "d) Les dues polítiques entraran en conflicte i cancel·laran la subscripció."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "L'herència a Azure és additiva i jeràrquica. Les assignacions de rols (RBAC) i les Polítiques aplicades a nivells superiors es sumen a les aplicades als nivells inferiors. El recurs ha de complir tota la cadena normativa fins a l'arrel.",
+        "tema": "8. Governança"
+    },
+    {
+        "pregunta": "279. Quin és l'objectiu principal d'associar o etiquetar recursos (Tagging) des del punt de vista FinOps (Operacions Financeres al núvol)?",
+        "opcions": [
+            "a) Aconseguir descomptes del 50% al cost de la xarxa.",
+            "b) Activar l'auto-escalat financer.",
+            "c) Permetre el Showback/Chargeback (Imputació de Costos), és a dir, agrupar la facturació per centres de cost corporatius per poder cobrar la despesa al departament corresponent (ex: Centre_de_Cost: 5543).",
+            "d) Augmentar la velocitat de resposta de les consultes de la base de dades."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "Al núvol no hi ha factura per cada petit recurs. Tota la despesa (compute, storage, network) de milers de recursos s'aboca a una factura central. Els Tags són l'única manera eficient de filtrar aquesta factura (a Cost Management) per poder repercutir la despesa a qui realment l'ha generada.",
+        "tema": "8. Governança"
+    },
+    {
+        "pregunta": "280. A nivell de Governança corporativa, com ha d'actuar l'Administració Pública (per exemple, DIBA) si necessita que tots els seus nous entorns desplegats a Azure neixin amb una configuració tancada, incloent xarxes, NSGs, RBAC i Polítiques assignades prèviament per seguretat?",
+        "opcions": [
+            "a) Creant els recursos manualment un a un al portal d'Azure i contractant més auditors.",
+            "b) Executant una simple plantilla ARM que només fa IaaS.",
+            "c) Ús d'Azure Blueprints o Landing Zones programades, que empaqueten els artefactes (plantilles de recursos, RBAC i Policy) sota un desplegament estandarditzat, traçable i repetible per a cada nou departament.",
+            "d) Contractant el servei de suport Premier de Microsoft perquè ho facin ells remotament."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "Una de les definicions base de les Zones d'Aterratge (Landing Zones) en el Cloud Adoption Framework és permetre aprovisionar nous entorns (com subscripcions) amb guàrdies de seguretat prescrits corporativament, escalant mitjançant IaC com Blueprints o Bicep.",
+        "tema": "8. Governança"
+    },
+    {
+        "pregunta": "281. Un desenvolupador crearà 50 màquines virtuals que utilitzen exactament el mateix propòsit durant el pròxim any complet sense parar (24/7). Quina decisió governamental haurà de validar l'Arquitecte Cloud per evitar malgastar pressupost públic?",
+        "opcions": [
+            "a) No fer res, Pay-as-you-go sempre és l'opció més barata a l'any.",
+            "b) Demanar-li que utilitzi només màquines de la sèrie B gratuïtes.",
+            "c) Executar la compra de Reserved Instances (Instàncies Reservades) a 1 o 3 anys per aquest conjunt de computació i així deduir el cost per hora del compute amb descomptes de fins a un 72%.",
+            "d) Apagar-les cada nit encara que l'aplicació necessiti estar 24 hores funcionant."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "L'arquitecte cloud ha de conèixer els models de consum. Davant càrregues de treball constants, fixes i predictibles 24/7, el model de Pagament per Ús és financerament ineficient. Cal un compromís de reserva per optimitzar OPEX dràsticament.",
+        "tema": "1. Fonaments"
+    },
+    {
+        "pregunta": "282. Un ciutadà navega pel portal de la Diputació d'aplicacions internes. Si un element local de xarxa a Azure envia el tràfic d'Internet directament des d'un contenidor Storage sense inspecció, quin principi de seguretat Zero Trust està fallant?",
+        "opcions": [
+            "a) Principi de Mínim Privilegi.",
+            "b) Assumir que hi ha hagut una Bretxa (Assume Breach).",
+            "c) Verificació Explícita (Explicit Verification).",
+            "d) Tots els principis estan bé; Storage és un servei segur."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "El principi de Verificació Explícita dicta que s'ha d'autenticar i autoritzar (mitjançant identitats fortes, WAFs, anàlisi de context) tota connexió independentment del seu origen, fins i tot si és 'interna' dins d'una xarxa pròpia, evitant la connexió directa o anònima sempre que es pugui.",
+        "tema": "2. Identitat i accés"
+    },
+    {
+        "pregunta": "283. En utilitzar Azure Data Box per a una migració de Dades en un escenari Cloud, quina solució aporta principalment respecte a utilitzar Azure Storage Explorer clàssic per Internet?",
+        "opcions": [
+            "a) Modifica les dades SQL a estructures NoSQL.",
+            "b) Supera les limitacions d'una amplada de banda de xarxa petita On-Premise quan cal moure enormes terabytes o petabytes de dades a l'Azure d'una manera física ràpida (enviament del dispositiu segur per missatgeria).",
+            "c) Sincronitza Active Directory complet automàticament.",
+            "d) L'Azure Data Box proporciona emmagatzematge en RAM."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "Azure Data Box s'utilitza en migracions de dades fora de línia. Les migracions de desenes de TB per una xarxa corporativa normal trigarien mesos; per això, carregar la informació a la unitat física localment i enviar-la resol el coll d'ampolla del temps.",
+        "tema": "3. Recursos d'Azure"
+    },
+    {
+        "pregunta": "284. Volem fer una connexió de tipus VPN Site-to-Site des del router principal de la DIBA. A banda del mateix dispositiu físic On-Premise (VPN Device), quins components cal construir dins de la xarxa d'Azure per consolidar el túnel IPsec?",
+        "opcions": [
+            "a) Només un Azure Firewall.",
+            "b) Una subxarxa específica dedicada (GatewaySubnet), un Virtual Network Gateway, i un Local Network Gateway (que defineixi la IP de l'edifici físic).",
+            "c) Un Private Endpoint OIDC al servidor DNS.",
+            "d) Azure ExpressRoute Direct."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "Aquesta és la recepta IaaS pura per a la VPN Site-to-Site a Azure. Requereix obligatòriament la subxarxa GatewaySubnet per desplegar-hi l'encaminador (Virtual Network Gateway), i l'objecte lògic que apunta al router de Barcelona (Local Network Gateway).",
+        "tema": "3. Recursos d'Azure"
+    },
+    {
+        "pregunta": "285. A Application Insights, si estic preocupat per quant triga el meu servidor web backend a rebre resposta de la Base de Dades SQL d'Azure que té vinculada, quina pestanya o mètrica haig de consultar al panell principal?",
+        "opcions": [
+            "a) Excepcions (Exceptions) de navegador.",
+            "b) Dependències (Dependencies).",
+            "c) Trànsit d'entrada i sortida.",
+            "d) Sol·licituds Fallides del Gateway."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "L'APM (Application Insights) entén com a 'Dependència' qualsevol element extern al qual el codi principal hagi de fer una petició (trucada d'API REST de tercers, Bases de Dades, Blob Storage), mesurant-ne de manera nativa la latència i percentatge d'errors.",
+        "tema": "4. Monitoratge"
+    },
+    {
+        "pregunta": "286. Què utilitzaria l'arquitecte cloud si vol capturar de forma bruta (Raw) tots els paquets entrants i sortints dels ports de xarxa i subxarxes específiques a un Blob per enviar-los, després, al departament de Forense o Ciberseguretat (SIEM)?",
+        "opcions": [
+            "a) Les mètriques d'ús de CPU de l'Azure Monitor.",
+            "b) L'extensió de NSG Flow Logs (Registres de flux del NSG) a través de Network Watcher.",
+            "c) L'Activity Log d'Azure de subscripció (Registre d'Activitat).",
+            "d) La funció de Log Analytics per aplicacions web."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "L'Activity Log documenta el 'Control Plane' (qui ha creat un recurs o l'ha esborrat). Per documentar el 'Data Plane' a nivell de xarxa (quina IP s'ha intentat connectar a quin port i si se li ha permès o denegat el pas), els NSG Flow Logs són l'estàndard.",
+        "tema": "4. Monitoratge"
+    },
+    {
+        "pregunta": "287. Referent a patrons d'arquitectura microserveis. El terme 'Acoblament Feble' (Loose Coupling) que fomenten el Service Bus i l'Event Grid busca primordialment:",
+        "opcions": [
+            "a) Que les màquines virtuals tinguin discos SSD més petits.",
+            "b) Assegurar que els components del sistema tinguin la mínima informació els uns dels altres i no hi hagi dependència sincrònica, impedint que si un microservei pateix retards, arrossegui la resta de l'aplicació en cascada.",
+            "c) Acoblar la Base de dades relacional al mateix node computacional del codi web.",
+            "d) Forçar tota l'aplicació a un disseny de model Monolític fort per guanyar seguretat de codi."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "L'acoblament feble és el nucli de la resiliència asíncrona a Azure. Un emissor i un receptor treballen per separat mitjançant una cua. Si el receptor es sobrecarrega, l'emissor ni ho sap ni s'atura, augmentant l'elasticitat general del sistema total.",
+        "tema": "5. Disseny i Arquitectura"
+    },
+    {
+        "pregunta": "288. L'arquitecte s'adona que el Departament A va desplegar un servidor manualment des del portal, oblidant els paràmetres correctes de xifrat dictaminats al disseny IaaC original corporatiu. El concepte d'aquesta discrepància o pèrdua de l'alineació de la infraestructura amb el pas del temps cap a errors de canvi humà es coneix comunament en Cloud com:",
+        "opcions": [
+            "a) Drift o 'Configuration Drift' (Desviació de Configuració).",
+            "b) Cost Overrun (Desbordament de pressupost).",
+            "c) PaaS Lock-In (Dependència del proveïdor PaaS).",
+            "d) Autoscaling horitzontal mal implementat."
+        ],
+        "respostaCorrecta": 0,
+        "justificacio": "La desviació de configuració (Drift) és el problema principal que soluciona el model IaC acoblat amb Azure Policy o 'What-if'. Si la infraestructura es declara en codi font fix i controlat (Bicep/Terraform), alterar coses manualment via portal web corromp l'estat font, produint aquest desquadrament.",
+        "tema": "5. Disseny i Arquitectura"
+    },
+    {
+        "pregunta": "289. Com interactuen nativament l'Azure AI Foundry i el catàleg de 'Model Catalog' respecte a tecnologies alienes a Microsoft o d'Open-Source (com Llama, Mistral, etc.)?",
+        "opcions": [
+            "a) Estan completament prohibits dins el núvol governamental o corporatiu d'Azure.",
+            "b) El Model Catalog inclou exclusivament la família GPT i DALL-E propietat d'OpenAI i Microsoft per temes legals.",
+            "c) S'adopta un enfocament agnòstic o plataforma oberta (MaaS), allotjant i permetent als desenvolupadors comparar fàcilment el rendiment o utilitzar grans models fundacionals de tercers (Meta, Hugging Face, Cohere) sota l'empara segura i privada d'execució d'Azure.",
+            "d) Els models oberts es descarreguen a discos locals de l'usuari i la xarxa és talla sempre."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "L'estratègia moderna de Microsoft a Azure AI Foundry (Models as a Service) no és tancar la porta a altres models lingüístics, sinó permetre aprovisionar models líders de mercat com Llama de Meta, amb la confiança que les peticions funcionen sobre l'estructura fiable i protegida (Private Endpoints, RBAC) de l'inquilí d'Azure.",
+        "tema": "6. IA"
+    },
+    {
+        "pregunta": "290. Els enginyers han creat un Model RAG per respondre als usuaris sobre documentació jurídica. Malgrat que el sistema disposa d'informació clara a la base de dades, de vegades el GPT inclou lleis inventades (plausibles però falses). Aquest problema recurrent fonamental a controlar s'anomena:",
+        "opcions": [
+            "a) Al·lucinació de l'IA (AI Hallucination / Fabrication).",
+            "b) Pèrdua d'Alineació de Rols.",
+            "c) Temps de Cold Start (Inici en fred).",
+            "d) Excedència de Tòquens d'API externa."
+        ],
+        "respostaCorrecta": 0,
+        "justificacio": "L'al·lucinació succeeix quan un Large Language Model confia excés a la memòria genèrica en lloc d'adherir-se al context que el sistema RAG li ha passat pel System Prompt (ex: 'Respon NOMÉS amb els documents proporcionats, si no ho saps, digues ho desconec').",
+        "tema": "6. IA"
+    },
+    {
+        "pregunta": "291. Per facilitar que certs ordinadors portàtils que viatgen constantment per tota la península es validin a la infraestructura corporativa de la DIBA, el sistema no depèn de IPs blanques a l'NSG, sinó de verificar que el dispositiu Windows compleix polítiques locals d'antivirus al dia, lligat amb el seu Identificador del Domini Microsoft abans de passar i obrir l'arxiu governamental, referim a:",
+        "opcions": [
+            "a) Tallafocs WAF d'Application Gateway per aplicació HTTP pura.",
+            "b) Accés Condicional avaluant 'Device Compliance' (Compliment del dispositiu via Intune) alineat amb polítiques corporatives de Zero Trust abans de donar accés basat exclusivament en l'usuari i dispositiu real local, no l'IP canviant del WIFI públic on l'usuari està connectat de torn.",
+            "c) Azure SQL TDE.",
+            "d) Un VPN S2S global massiu enrutat per un túnel MPLS dedicat."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "El compliment del dispositiu (integrant-se típicament via Intune al Conditional Access) és l'element culminant de la confiança zero. No n'hi ha prou de tenir nom/contrasenya, cal que l'ordinador portàtil que fa la petició formi part del llistat fiable de la Diputació i no estigui compromès prèviament per malware per poder recollir informació d'Azure SaaS.",
+        "tema": "7. Seguretat"
+    },
+    {
+        "pregunta": "292. Si el departament té múltiples bases de dades a l'Azure SQL i un administrador en xifra el contingut en 'Data Rest' (dades emmagatzemades físicament als discos del centre de dades Azure). Com protegeix Azure SQL això de sèrie automàtic i per defecte sense requerir intervenció directa o canvis d'App?",
+        "opcions": [
+            "a) Mitjançant els NSG que desxifren sobre marxa el model.",
+            "b) Transparent Data Encryption (TDE), xifrant l'emmagatzematge del disc pla de dades i les còpies de seguretat log a nivell físic en temps real de forma invisible ('transparent') per a la consulta SQL i el programa usuari connectat per capa superior.",
+            "c) Amb Azure VPN obligatòriament per l'origen passarel·la Gateway.",
+            "d) Entra Domain Services per LDAP IaaS base genèrica limitat."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "TDE protegeix l'Azure SQL contra el risc que algú robi físicament els mitjans i discos de l'Azure (cosa gairebé impossible, però clau pel compliment). És xifrat en repòs. No xifra el trànsit en trànsit o de la línia activa a la memòria, i per l'aplicació connectada superior no hi ha cap canvi de codi. Tot és transparent.",
+        "tema": "7. Seguretat"
+    },
+    {
+        "pregunta": "293. L'ús d'Instàncies Reservades a 3 anys s'associa estrictament i beneficia directament de descompte econòmic a quin concepte central de la màquina virtual?",
+        "opcions": [
+            "a) Al cost d'emmagatzematge dels discos associats Premium SSD exclusivament subjacents en la llista del contracte base d'elements limitadors de volum físic real persistent extern.",
+            "b) Al cost base generat del trànsit d'enviament de xarxa perimetral per sortir globalment fora de la corporació (Outbound Data Transfer).",
+            "c) Al cost pur per l'element o potència d'aprovisionament de Computació (Compute, el Hardware físic reservat CPU/RAM exclusivament) generat per temps base constant limitat, que no ampara de preu associat en llicències Windows o discos virtuals adherits directament als adjunts extres lliures genèrics.",
+            "d) Al cost del tallafocs Azure Firewall bàsic perimetral vinculat de sortida base tancat global genèric permanent associat forçat limitat de l'eina o suport de ciberseguretat."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "Crucial en gestió pressupostària a TCO Azure Cost: La 'Reserved Instance' dóna descompte AL HARDWARE DE CÀLCUL (La VM o host). El descompte NO cobreix els Discos o emmagatzematge associats (que es paguen per separat segons mida) ni tampoc l'exportació de dades. (Tot i que es poden reservar capacitats de storage per blocs, és un procediment secundari autònom i a part).",
+        "tema": "8. Governança"
+    },
+    {
+        "pregunta": "294. Quin problema pràctic organitzatiu de subscripcions al núvol permet resoldre un disseny on s'adopta en conjunt fort les característiques d'Azure Policy i l'automatització amb Management Groups units?",
+        "opcions": [
+            "a) Un disseny per descarregar tot internet al mateix lloc local de base.",
+            "b) Substituir a la gent encarregada i els desenvolupadors creant IAs i bots per construir.",
+            "c) Permetre que nous departaments creïn les seves pròpies subscripcions des de zero autònomes per ells lliures de fons forçosament independents aïllats en una base descentralitzada caòtica on cada un decideix xifrat base.",
+            "d) Governança a gran escala sense intervenció manual ('Guardrails' o baranes protectores forçades); si l'entitat obre demà 20 subscripcions per nous pobles associats per projecte diferent, automàticament cau en bloc 'per herència jeràrquica' l'assignació normativa de prohibició de regions, limitació IPs i l'etiquetatge predefinit als grups sense necessitat que l'arquitecte vagi re-revisant script i creant manual el perímetre bàsic del model de compliance de 0 i perdent control segur al cicle inicial."
+        ],
+        "respostaCorrecta": 3,
+        "justificacio": "La paraula Guardrails defineix l'Arquitectura Enterprise Landing Zone a gran escala: Permetre l'Autoservei ràpid als departaments limitant l'efecte de Shadow IT. Saps amb total certesa complidora que, obri qui obri projecte dins de l'arbre controlat corporativament de la jerarquia, no es podrà botar l'obligatorietat d'enviar el registre central ni establir IP pública on està denegat.",
+        "tema": "8. Governança"
+    },
+    {
+        "pregunta": "295. Tenint en compte l'ordre precís que s'efectua en l'autenticació per Entra ID, si l'esquema Conditional Access de l'Inquilí corporatiu posa una regla tipus 'Requereix complir Dispositiu validat, Requerir MFA'. Què és allò primer exigit que avaluarà a continuació a l'inici abans d'activar restriccions variables o passar per passos?",
+        "opcions": [
+            "a) Res de primeres, directament envia i realitza la comprovació per IP per evitar el log complet en primera instància fins i tot sense introduir informació clau base i evitar intents genèrics automàtics a la vista frontal.",
+            "b) Bloquejar el factor xarxa sense adonar a l'usuari que ha intentat la connexió errònia i de segon descarregar pedaços pel servidor actiu prenent context.",
+            "c) Sempre requerirà un Mètode o Verificació de Primer Factor primari correcte base forços (usuari i contrasenya principal) de forma correcta per validar la Identitat Primordial de base de coneixement, abans que el motor condicional arrenqui l'avaluació de si cal bloquejar, permetre o saltar el MFA fort basat en regles secundàries de senyalització addicionals com on o amb què està l'usuari un cop logat l'arrel lligada inicial normal.",
+            "d) El VPN Site 2 Site ha d'obrir en local la passada de validació del Kerberos original local del servidor base al mateix ordinador abans de la sol·licitud a Entra ID sempre localitzat en tot l'entorn limitador."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "Conditional Access entra en acció JUST DESPRÉS de l'autenticació de primer factor completada base amb èxit (First Factor Auth - usuari i contrasenya). No avalua condicions sobre la marxa si ni tan sols l'usuari posa bé el seu propi inici login d'arrel.",
+        "tema": "2. Identitat i accés"
+    },
+    {
+        "pregunta": "296. L'ús pràctic de la tecnologia Docker (format paquet portàtil) que subjau a elements i recursos del cloud modern PaaS avançat com Azure Container Instances (ACI) solucionen de fons en l'operativa de programadors d'arquitectura principal un problema de xoc estructural freqüent. Quin error comú de configuració IT es remedia emprant el format clau dels contenidors esmentats respecte al desenvolupament pur a VM local?",
+        "opcions": [
+            "a) Impedeix atacs de hackers delinqüents en capa alta al posar mur rígid per hardware físic local limitant IPs en xifrats propis.",
+            "b) La problemàtica o error de 'A la meva màquina funciona, però a Producció el servidor no va per llibreries'; ja que el contenidor aïlla i empaqueta o encapsula el codi justament amb TOTES les llibreries exactes del projecte independentment del S.O base en què s'emmarqui després per on acabi executant-se a producció evitant conflictes i instal·lacions complexes paral·leles inestables base del sistema lligat.",
+            "c) Rebaixar l'emmagatzematge requerit per fitxers genèrics com àudios al 10% del que pesen normal limitat del compressor intern automàtic base.",
+            "d) Evitar haver d'adquirir un Active Directory i dependre de base de servidors IaaS externs de Microsoft."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "L'estandardització del format executable ('It works on my machine'). Els contenidors (Containers) aïllen les dependències del paquet tancant-les immutables (Codi + Versió de Node/Python necessària precisa sense interferir amb el Sistema Operatiu del host, a diferència de desplegar a una VM crua que pateix degradacions de l'entorn i xoc de versions).",
+        "tema": "3. Recursos d'Azure"
+    },
+    {
+        "pregunta": "297. Si per disseny Cloud de continuïtat un dels requisits empresarials o institucionals fonamentals per a l'arquitecte s'emmarca en tenir un RTO (Recovery Time Objective) extremadament prop a Zero minuts de caiguda, indicant restabliment en directe sobre una operació IaaS, quina estratègia serà necessària implementar sense excuses pel sistema operatiu global?",
+        "opcions": [
+            "a) Fer Còpies o Backups completes i íntegres extenses empaquetades cada mitjanit del sistema al Blob d'emmagatzematge limitant cost fins a reestablir el darrer punt del mig dia previ forçós limitat a poc cost.",
+            "b) Desplegar infraestructura Actiu-Actiu en Regions Emparellades paral·leles (Paired Regions / Multi-Region deployment), recolzats pel servei com un Azure Traffic Manager frontal redirigint l'instant sense tall perceptible si una regió esdevingués fora de línia bruscament genèrica completa garantint tràfic fluït sota error complet constant asíncron general.",
+            "c) Mantenir les dades a instal·lacions exclusivament físiques 'On-Premise' locals evitant problemes al Cloud global assegurant servidors a Barcelona amb disc mecànic limitador base permanent exclusiu d'alta memòria lligada interna pura per defecte.",
+            "d) Passar a utilitzar i consumir completament model Serverless per a que no intervingui en l'operativa humana al mig aturant-ho de tot del tot forçant un canvi complet asíncron automàtic local aïllant elements fixes base d'unió ràpid temporal clau."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "Un RTO prop a Zero significa 'Tolerància a la falla immediata sense downtime'. Només s'assoleix amb arquitectures High Availability extremes Actiu-Actiu globalment (com Front Door + múltiples App Services en diverses zones o regions d'origen, combinat amb dades multi-màster com Cosmos DB, atès que restaurar un pur Backup (Azure Backup) triga hores i suposa RTO altíssims penalitzadors per la crítica immediata.)",
+        "tema": "5. Disseny i Arquitectura"
+    },
+    {
+        "pregunta": "298. La IA requereix un tractament auditable als formularis públics. Una capacitat per defecte que té inclosa l'API per al servei base de 'Azure OpenAI' respecte a la telemetria o dades, d'acord amb normes ètiques establertes i polítiques responsables d'us per prevenció del mal a usuaris i protecció per defecte és que:",
+        "opcions": [
+            "a) Per defecte emmagatzemarà asíncronament durant fins a 30 dies certs registres de 'prompts' de text sol·licitats per l'usuari amb el propòsit auditat i finalitat exclusiva justificada de buscar i detectar abusos ('Abuse monitoring') o patrons d'activitat il·lícita restringida toxicitat asíncrona local (tot i ser un paràmetre que es pot revocar o ometre 'opt-out' prèvia justificació formal a les institucions per normativa exigent al tenir casos altament reservats).",
+            "b) Publica tots els models i dades d'escriptura dels treballadors lliurement a l'Internet genèric un cop s'ha complert 1 mes d'allotjament al servidor actiu per estalviar fons de base d'estat aïllant responsabilitats.",
+            "c) Bloqueja que ningú faci preguntes llargues al sistema de més de cinquanta caràcters per evitar desgastar i abusar del CPU de Microsoft, forçant el pagament doble exclusivament per consum general elevant barreres ràpides automàticament predeterminades fixes del limitador base genèric de consum de fons.",
+            "d) Es connecta de forma general al domini AD per publicar i vincular la identitat a les respostes automàtiques que els usuaris reben i forçant autenticació MFA abans d'escriure res com base estàndard forçosa limitant automatització programàtica d'API i codis interns per defecte del programador clau."
+        ],
+        "respostaCorrecta": 0,
+        "justificacio": "Aquesta és una pregunta AZ avançada de seguretat en IA. Microsoft (com a filtre Content Safety posterior asíncron) reté 30 dies les converses d'OpenAI del tenant de manera super-segura només pels seus serveis anti-abús (detectar usuaris que programen atacs i malwares). Per a usos governamentals, clients amb estrictes marcs de dades poden aplicar l'exempció asíncrona i impedir fins i tot que Microsoft mantingui aquest registre passiu, assegurant així un flux de dades 100% estèril a petició.",
+        "tema": "6. IA"
+    },
+    {
+        "pregunta": "299. Si l'objectiu és simplificar una infraestructura o xarxa IaaS tancada de Microsoft i l'empresa o institució local busca delegar al núvol l'entrega i resolució del trànsit dels usuaris d'Internet sense obrir directament màquines frontals o DMZs amb llistes d'accés (ACLs), utilitzar l'anomenat Azure Application Gateway aporta com a fonament directe sobre d'operar-lo:",
+        "opcions": [
+            "a) Que processa automàticament respostes dels usuaris enviant-los directament en format xifrat per IP base de memòria física d'Internet i tallant completaments els serveis subjacents de capa VNet del núvol perimetral tancat global temporal constant autònom actiu base.",
+            "b) Fer d'intermediari que només escolta a nivell de ports IP bàsics a la capa baixa forçada lliure al node intern evitant protocols base generals web i protegint dades fixes de la subxarxa limitades i inaccessibles sense adreces clares o dades estàtiques formals de rutes generals i regles aïllades de fons per defecte.",
+            "c) Oferir proxy invers de capa 7 exclusivament per al trànsit de protocol web d'Internet (HTTP/HTTPS) realitzant desencriptació TLS asíncrona o SSL Offloading per alleujar els teus servidors de càlcul complexos interns, així com permetent balanceig intel·ligent o redirigir peticions depenent exclusivament de la ruta de l'URL concreta sol·licitada del lloc (ex: els camins web cap a l'arxiu d'imatges envien trànsit al Pool 1 específic diferent del base limitador lligat general segur).",
+            "d) Gestionar contrasenyes internes segures de xifrat al client asíncron a nivell general compartit establint un servei d'emmagatzematge en cau limitat de funcions aïllades d'Entra ID general previ vinculat fort base intern del procés genèric operatiu comú general autònom d'accés permanent o lliure autònom."
+        ],
+        "respostaCorrecta": 2,
+        "justificacio": "L'App Gateway representa el balancejador web PaaS per excel·lència. Treu i finalitza els pesats certificats segurs a la porta abans (SSL Offload) del viatge intern i distribueix eficientment cap al servei (App Service o Màquina) depenent si un busca URL /Imatges o URL /vídeos o a través d'hosts diferents virtuals consolidant-se juntament amb el seu component WAF integrat com pilar ineludible per exposar webs protegides (Capa 7).",
+        "tema": "5. Disseny i Arquitectura"
+    },
+    {
+        "pregunta": "300. Dintre l'avaluació estricta d'arquitectures on s'efectuïn canvis massius o accions complexes via consola: El panell del servei que conté tots els esdeveniments, falles i desplegaments (operacions de control), qui ha realitzat un Stop a una màquina virtual al portal, quin usuari d'Entra ID o quin procés va modificar una xarxa VNet dins d'Azure al llarg generalment predeterminat de 90 dies en la subscripció completa governamental assequible i segur és coneix nativament en l'espai base perimetral del proveïdor principal com a:",
+        "opcions": [
+            "a) L'Azure Identity Access Manager Base Global.",
+            "b) Microsoft Azure Activity Log (El registre de l'Activitat exclusiu de tot el pla de gestió (Control Plane) de recursos de l'Azure Resource Manager on l'Administrador pot monitoritzar l'origen sencer d'aquells efectes natius realitzats al lloc global forçós limitant).",
+            "c) El panell d'Application Insights d'usuari i la seva anàlisi genèrica pre-assignada exclusivament d'activitats internes web pel format tancat generant dades asíncrones del trànsit limitant accessos clau base d'estudi de fons genèric operatiu per usuari real assequible local.",
+            "d) Log Analytics Metrics Workspaces aïllat sense connexions automàtiques o report global de seguiment lliure que empara de manera pròpia les bases de l'estudi asíncron autònom independent al marge de les consoles limitant de pas l'ús d'operacions tancat i control general permanent operatiu intern clau."
+        ],
+        "respostaCorrecta": 1,
+        "justificacio": "L'Activity Log (Registre d'Activitat) és un pilar de Governança del núvol: tota ordre PUT, DELETE o modificació dirigida a l'API del 'Resource Manager' des del Portal web, CLI o via l'enginyer amb el Bicep queda total i automàticament emparada als registres d'activitat de la subscripció, assenyalant exactament l'IP, el compte (Actor) de Microsoft Entra, l'hora de l'avís de seguretat, i l'èxit/falla (Status) de qualsevol creació base aportant transparència i auditoria passiva nativa total.",
+        "tema": "4. Monitoratge"
     }
 ]
