@@ -468,6 +468,7 @@ button:hover .icon-right {
     color: var(--text-primary);
     margin-bottom: 10px;
     letter-spacing: -0.5px;
+    line-height: 1.2;
 }
 
 .subtitle {
