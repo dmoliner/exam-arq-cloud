@@ -52,6 +52,10 @@ app.get('/preguntes.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'preguntes.json'));
 });
 
+app.get('/preguntes-caspractic.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'preguntes-caspractic.json'));
+});
+
 app.get('/app.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'app.js'));
 });

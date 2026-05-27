@@ -426,4 +426,339 @@ button:hover .icon-right {
     .controls button {
         width: 100%;
     }
+    
+    .mode-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .assessment-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-success, .btn-danger {
+        width: 100%;
+    }
 }
+
+/* Utilitats */
+.hidden { display: none !important; }
+
+/* Menú Principal */
+.menu-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.badge {
+    display: inline-block;
+    background-color: var(--color-selected-bg);
+    color: var(--color-cloud-blue);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
+
+.main-title {
+    font-size: clamp(1.6rem, 5vw, 2.3rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+}
+
+.section-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--bg-card-border);
+}
+
+/* Targetes del Menú (Mode Selection) */
+.mode-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.mode-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--bg-card-border);
+    border-radius: 1.25rem;
+    padding: 30px 24px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+}
+
+.mode-card:hover {
+    border-color: var(--color-cloud-blue);
+    box-shadow: var(--shadow-premium);
+    transform: translateY(-4px);
+}
+
+.mode-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mode-icon-wrapper svg { width: 32px; height: 32px; }
+
+.test-icon {
+    background-color: #f0fdf4;
+    color: #16a34a;
+}
+
+.flash-icon {
+    background-color: var(--color-selected-bg);
+    color: var(--color-cloud-blue);
+}
+
+.mode-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.mode-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Històric Global */
+.stats-section {
+    background-color: #f8fafc;
+    border-radius: 1rem;
+    padding: 24px;
+    border: 1px solid var(--bg-card-border);
+    margin-top: 20px;
+}
+
+.btn-icon-back {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: var(--font-sans);
+    transition: var(--transition-smooth);
+    padding: 4px 8px;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 21px;
+}
+
+.btn-icon-back:hover {
+    color: var(--color-cloud-blue) !important;
+    background: none !important;
+}
+
+.quiz-title-area h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+/* Barra de Progrés */
+.progress-container {
+    background-color: #f1f5f9;
+    padding: 12px 18px;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.progress-text {
+    font-weight: 600;
+    color: var(--color-cloud-blue);
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    text-transform: none;
+    letter-spacing: normal;
+    text-align: left;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-cloud-blue), var(--color-accent));
+    width: 0%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Textarea Mode Desenvolupament */
+.text-answer-area {
+    margin-bottom: 24px;
+}
+
+.textarea-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+#user-answer {
+    width: 100%;
+    min-height: 140px;
+    padding: 14px;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    border-radius: 0.75rem;
+    border: 1.5px solid #cbd5e1;
+    resize: vertical;
+    margin-bottom: 16px;
+    transition: var(--transition-smooth);
+    background-color: #f8fafc;
+    color: var(--text-primary);
+}
+
+#user-answer:focus {
+    outline: none;
+    border-color: var(--color-cloud-blue);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+#user-answer:disabled {
+    background-color: #f1f5f9;
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+
+#btn-comprovar {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.2);
+}
+
+.btn-inline-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* Autoavaluació Flashcard */
+.self-assessment {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed #bae6fd;
+    text-align: center;
+}
+
+.self-assessment p {
+    font-weight: 700;
+    color: var(--color-cloud-deep);
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.assessment-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--color-correct) 0%, #059669 100%) !important;
+    color: white !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.825rem !important;
+    font-weight: 600 !important;
+    border-radius: 0.5rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: var(--transition-smooth) !important;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15) !important;
+}
+
+.btn-success:hover {
+    filter: brightness(1.08) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.25) !important;
+}
+
+.btn-success:active {
+    transform: translateY(0) !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--color-incorrect) 0%, #e11d48 100%) !important;
+    color: white !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.825rem !important;
+    font-weight: 600 !important;
+    border-radius: 0.5rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: var(--transition-smooth) !important;
+    box-shadow: 0 4px 10px rgba(244, 63, 94, 0.15) !important;
+}
+
+.btn-danger:hover {
+    filter: brightness(1.08) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(244, 63, 94, 0.25) !important;
+}
+
+.btn-danger:active {
+    transform: translateY(0) !important;
+}
+
+.assessment-buttons button svg {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+#btn-seguent {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.875rem !important;
+    min-height: 2.5rem !important;
+    border-radius: 0.5rem !important;
+}
+
+#btn-seguent .btn-icon {
+    width: 1rem !important;
+    height: 1rem !important;
+}
