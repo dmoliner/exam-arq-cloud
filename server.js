@@ -7,12 +7,14 @@ const PORT = process.env.PORT || 3000;
 
 const statsFilePath = path.join(__dirname, 'stats.json');
 
-// Credencials agafades de les variables d'entorn o fallbacks segurs
+// Credencials de la base de dades de 2 usuaris obtingudes de variables d'entorn d'Azure
 const USER_ADMIN = process.env.user_admin || 'admin';
 const PASS_ADMIN = process.env.pass_admin || 'admin123';
+const USER_STUDENT = process.env.user1 || 'user1';
+const PASS_STUDENT = process.env.pass_user1 || 'user123';
 
-if (!process.env.user_admin || !process.env.pass_admin) {
-    console.warn(`[⚠️ SEGURETAT] Les variables d'entorn user_admin o pass_admin no estan definides. S'estan utilitzant les credencials per defecte.`);
+if (!process.env.user_admin || !process.env.pass_admin || !process.env.user1 || !process.env.pass_user1) {
+    console.warn(`[⚠️ SEGURETAT] Faltes variables d'entorn d'Azure (user_admin, pass_admin, user1, pass_user1). S'estan utilitzant els valors de seguretat per defecte.`);
 }
 
 // Middleware per parsejar JSON en peticions POST/PUT
@@ -70,35 +72,50 @@ app.post('/api/stats', (req, res) => {
     });
 });
 
-// API d'Autenticació
+// API d'Autenticació (Base de dades de 2 usuaris de variables d'entorn d'Azure)
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     if (!username || username.trim() === '') {
         return res.status(400).json({ success: false, message: 'El nom d\'usuari és obligatori' });
     }
-
-    const normalizedUser = username.toLowerCase().trim();
-
-    // Si conté "admin", es valida contra les credencials d'administrador
-    if (normalizedUser.includes('admin')) {
-        if (username === USER_ADMIN && password === PASS_ADMIN) {
-            // Establir la cookie de sessió d'administrador (vàlida per 2 hores)
-            res.cookie('admin_session', 'authenticated_token_123', { httpOnly: true, maxAge: 2 * 60 * 60 * 1000 });
-            return res.json({ success: true, redirect: '/admin' });
-        }
-        return res.status(401).json({ success: false, message: 'Usuari o contrasenya d\'administrador incorrectes' });
+    if (!password || password.trim() === '') {
+        return res.status(400).json({ success: false, message: 'La contrasenya és obligatòria' });
     }
 
-    // Per a qualsevol altre usuari (estudiant), es dóna accés directe al seu rendiment
-    // Establir cookie amb el nom de l'usuari per a personalització (vàlida per 30 dies)
-    res.cookie('user_name', username.trim(), { maxAge: 30 * 24 * 60 * 60 * 1000 });
-    return res.json({ success: true, redirect: '/rendiment' });
+    const trimmedUser = username.trim();
+    const trimmedPass = password.trim();
+
+    // 1. Validació d'Administrador
+    if (trimmedUser === USER_ADMIN && trimmedPass === PASS_ADMIN) {
+        res.cookie('admin_session', 'authenticated_token_123', { httpOnly: true, maxAge: 2 * 60 * 60 * 1000 });
+        return res.json({ success: true, redirect: '/admin' });
+    }
+
+    // 2. Validació d'Estudiant (user1)
+    if (trimmedUser === USER_STUDENT && trimmedPass === PASS_STUDENT) {
+        res.cookie('student_session', 'authenticated_token_456', { httpOnly: true, maxAge: 12 * 60 * 60 * 1000 });
+        res.cookie('user_name', USER_STUDENT, { maxAge: 30 * 24 * 60 * 60 * 1000 });
+        return res.json({ success: true, redirect: '/' });
+    }
+
+    return res.status(401).json({ success: false, message: 'Usuari o contrasenya incorrectes' });
 });
 
 app.get('/api/logout', (req, res) => {
     res.clearCookie('admin_session');
+    res.clearCookie('student_session');
     res.clearCookie('user_name');
     res.redirect('/login');
+});
+
+// API per consultar l'estat actual de la sessió de l'usuari
+app.get('/api/session', (req, res) => {
+    if (req.cookies.admin_session === 'authenticated_token_123') {
+        return res.json({ loggedIn: true, role: 'admin', username: USER_ADMIN });
+    } else if (req.cookies.student_session === 'authenticated_token_456') {
+        return res.json({ loggedIn: true, role: 'student', username: USER_STUDENT });
+    }
+    return res.json({ loggedIn: false });
 });
 
 // API GET: Llistar totes les preguntes de test i casos pràctics per a gestió

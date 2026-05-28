@@ -7,7 +7,50 @@ let currentMode = ''; // 'test' o 'flashcard'
 // Esdeveniment inicial al carregar el DOM
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Inicialitzar botons específics de Flashcard    document.getElementById('btn-comprovar').onclick = () => {
+    // Comprovar estat de la sessió de l'usuari i rendiment condicional
+    fetch('/api/session')
+        .then(res => res.json())
+        .then(data => {
+            const profileBtn = document.querySelector('.btn-user-profile');
+            const mainStatsSection = document.getElementById('main-stats-section');
+            
+            if (data.loggedIn) {
+                if (data.role === 'student') {
+                    // Revelar secció de rendiment i carregar dades per a l'estudiant
+                    if (mainStatsSection) {
+                        mainStatsSection.classList.remove('hidden');
+                        carregarHistoricGlobal();
+                    }
+                    // Adaptar botó de perfil per a tancament de sessió directe
+                    if (profileBtn) {
+                        profileBtn.href = '/api/logout';
+                        profileBtn.title = `Tancar Sessió (${data.username})`;
+                        profileBtn.classList.add('logged-in');
+                    }
+                } else if (data.role === 'admin') {
+                    // L'administrador manté ocult el panell principal però el seu botó s'adapta al seu espai privat
+                    if (profileBtn) {
+                        profileBtn.href = '/admin';
+                        profileBtn.title = `Panell d'Admin (${data.username})`;
+                        profileBtn.classList.add('logged-in');
+                        profileBtn.style.background = '#e0f2fe';
+                        profileBtn.style.borderColor = '#bae6fd';
+                        profileBtn.style.color = '#0369a1';
+                    }
+                }
+            } else {
+                // Usuari anònim, per defecte la secció de gràfics es manté oculta
+                if (mainStatsSection) {
+                    mainStatsSection.classList.add('hidden');
+                }
+            }
+        })
+        .catch(err => {
+            console.error("Error al comprovar la sessió de l'usuari:", err);
+        });
+
+    // Inicialitzar botons específics de Flashcard
+    document.getElementById('btn-comprovar').onclick = () => {
         const q = examen[indexActual];
         const respostaUsuari = document.getElementById('user-answer').value || "";
         document.getElementById('user-answer').disabled = true;
@@ -876,6 +919,32 @@ async function mostrarResultats() {
         
         const percentatgeGlobal = totalPreguntes > 0 ? ((totalEncerts / totalPreguntes) * 100).toFixed(1) : 0;
         document.getElementById('proves-fetes-text-final').innerHTML = `<b>${totalProves}</b> ${totalProves === 1 ? 'prova feta' : 'proves fetes'} &nbsp;|&nbsp; Mitjana: <b>${percentatgeGlobal}% encerts</b>`;
+    }
+}
+
+// Funció per carregar i dibuixar l'històric global en el menú principal (visible només per a user1)
+async function carregarHistoricGlobal() {
+    const stats = await obtenirStatsDiaries();
+    const dates = Object.keys(stats);
+    if (dates.length === 0) {
+        document.getElementById('diari-buit-menu').style.display = 'block';
+        document.getElementById('diari-grafic-wrapper-menu').style.display = 'none';
+    } else {
+        document.getElementById('diari-buit-menu').style.display = 'none';
+        document.getElementById('diari-grafic-wrapper-menu').style.display = 'flex';
+        dibuixarDiari('historicChartMenu', stats);
+        
+        let totalProves = 0;
+        let totalEncerts = 0;
+        let totalPreguntes = 0;
+        dates.forEach(d => {
+            totalProves += stats[d].provesFetes;
+            totalEncerts += stats[d].encertsTotals;
+            totalPreguntes += stats[d].preguntesTotals;
+        });
+        
+        const percentatgeGlobal = totalPreguntes > 0 ? ((totalEncerts / totalPreguntes) * 100).toFixed(1) : 0;
+        document.getElementById('proves-fetes-text-menu').innerHTML = `<b>${totalProves}</b> ${totalProves === 1 ? 'prova feta' : 'proves fetes'} &nbsp;|&nbsp; Mitjana: <b>${percentatgeGlobal}% encerts</b>`;
     }
 }
 

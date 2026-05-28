@@ -1269,6 +1269,19 @@ button:hover .icon-right {
     box-shadow: 0 6px 12px rgba(2, 132, 199, 0.1);
 }
 
+.btn-user-profile.logged-in {
+    background: #d1fae5;
+    border-color: #34d399;
+    color: #065f46;
+}
+
+.btn-user-profile.logged-in:hover {
+    background: #ffe4e6;
+    border-color: #fb7185;
+    color: #9f1239;
+    box-shadow: 0 6px 12px rgba(244, 63, 94, 0.15);
+}
+
 .btn-user-profile svg {
     width: 22px;
     height: 22px;
