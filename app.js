@@ -8,8 +8,7 @@ let currentMode = ''; // 'test' o 'flashcard'
 document.addEventListener('DOMContentLoaded', () => {
     carregarHistoricGlobal();
     
-    // Inicialitzar botons específics de Flashcard
-    document.getElementById('btn-comprovar').onclick = () => {
+    // Inicialitzar botons específics de Flashcard    document.getElementById('btn-comprovar').onclick = () => {
         const q = examen[indexActual];
         const respostaUsuari = document.getElementById('user-answer').value || "";
         document.getElementById('user-answer').disabled = true;
@@ -26,25 +25,50 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('justificacio-container').style.display = 'block';
         document.getElementById('self-assessment-container').classList.remove('hidden');
 
-        // Petit verificador automàtic de paraules clau
+        // Petit verificador automàtic de paraules clau i conceptes encadenats (Strict Mode)
         try {
             const resultat = avaluarRespostaAutomatica(respostaUsuari, q.justificacio || "");
             const infoDiv = document.getElementById('verificador-automatic-info');
             
             if (respostaUsuari.trim().length < 5) {
-                infoDiv.innerHTML = `🤖 <b>Verificador Automàtic:</b> La teva resposta és massa curta per avaluar-la automàticament.`;
+                infoDiv.innerHTML = `🤖 <b>Verificador Automàtic:</b> La teva resposta és massa curta per ser avaluada automàticament. Si us plau, desenvolupa més la teva explicació tècnica.`;
                 infoDiv.style.display = 'block';
             } else if (resultat.esCert) {
                 const paraulesPintades = resultat.paraulesTrobades.map(p => p.charAt(0).toUpperCase() + p.slice(1));
-                infoDiv.innerHTML = `🤖 <b>Verificador Automàtic:</b> Hem detectat conceptes clau coincidents (<i>${paraulesPintades.slice(0, 4).join(', ')}</i>). Recomanació: <b><span style="color:#10b981;">Encert</span></b>.`;
+                const conceptesPintats = resultat.conceptesEncadenats.map(c => c.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
+                
+                let htmlFeedback = `🤖 <b>Verificador Automàtic (Strict Mode):</b> S'ha validat la teva resposta!<br>`;
+                if (conceptesPintats.length > 0) {
+                    htmlFeedback += `✅ <b>Conceptes connectats detectats:</b> <i>${conceptesPintats.slice(0, 5).join(', ')}</i>.<br>`;
+                }
+                htmlFeedback += `🔑 <b>Paraules clau coincidents:</b> <i>${paraulesPintades.slice(0, 5).join(', ')}</i>.<br>`;
+                htmlFeedback += `Recomanació: <b><span style="color:#10b981;">Encert</span></b>.`;
+                
+                infoDiv.innerHTML = htmlFeedback;
                 infoDiv.style.display = 'block';
+                
                 // Efecte visual de feedback al botó recomanat
                 const btnEncert = document.getElementById('btn-encert');
                 btnEncert.style.transform = 'scale(1.05)';
                 setTimeout(() => btnEncert.style.transform = 'scale(1)', 1000);
             } else {
-                infoDiv.innerHTML = `🤖 <b>Verificador Automàtic:</b> No hem trobat suficients conceptes coincidents amb el model oficial. Recomanació: <b><span style="color:#f43f5e;">Error / Incompleta</span></b>.`;
+                const paraulesPintades = resultat.paraulesTrobades.map(p => p.charAt(0).toUpperCase() + p.slice(1));
+                const conceptesPintats = resultat.conceptesEncadenats.map(c => c.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
+                
+                let htmlFeedback = `🤖 <b>Verificador Automàtic (Strict Mode):</b> Resposta incompleta o manca de precisió en els conceptes clau.<br>`;
+                if (paraulesPintades.length > 0) {
+                    htmlFeedback += `🔑 <b>Paraules trobades:</b> <i>${paraulesPintades.slice(0, 5).join(', ')}</i> (mínim requerit: ${resultat.minimParaulesClau}).<br>`;
+                }
+                if (conceptesPintats.length > 0) {
+                    htmlFeedback += `🔗 <b>Conceptes detectats:</b> <i>${conceptesPintats.slice(0, 4).join(', ')}</i>.<br>`;
+                } else if (resultat.minimConceptes > 0) {
+                    htmlFeedback += `⚠️ <b>Consell tècnic:</b> Intenta connectar millor els conceptes o fer referència específica als serveis oficials i mètodes d'alta disponibilitat/seguretat demanats.<br>`;
+                }
+                htmlFeedback += `Recomanació: <b><span style="color:#f43f5e;">Error / Incompleta</span></b>.`;
+                
+                infoDiv.innerHTML = htmlFeedback;
                 infoDiv.style.display = 'block';
+                
                 // Efecte visual de feedback al botó recomanat
                 const btnError = document.getElementById('btn-error');
                 btnError.style.transform = 'scale(1.05)';
@@ -59,13 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-error').onclick = () => registrarAvaluacioFlashcard(false);
 });
 
-// Funcions auxiliars per al Verificador Automàtic de Paraules Clau
+// Funcions auxiliars per al Verificador Automàtic de Paraules Clau (Strict & Bigram Mode)
 function normalitzarText(text) {
     return text
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "") // Treure accents
-        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "") // Treure puntuació
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, " ") // Treure puntuació (posant espai per no ajuntar paraules)
+        .replace(/\s+/g, " ")
         .trim();
 }
 
@@ -73,31 +98,118 @@ function avaluarRespostaAutomatica(respostaUsuari, justificacioModel) {
     const textUsuari = normalitzarText(respostaUsuari);
     const textModel = normalitzarText(justificacioModel);
     
-    // Paraules catalanes/castellanes no significatives a excloure
-    const paraulesComuns = new Set([
+    // Paraules comunes catalanes, castellanes i de nexe a excloure
+    const paraulesStop = new Set([
         'sobre', 'perque', 'ambdos', 'llarg', 'terme', 'durada', 'molts', 'altres', 'forma', 'manera',
         'estat', 'sense', 'completament', 'exclusivament', 'nostra', 'vostra', 'totes', 'tots', 'quals',
         'qualssevol', 'poden', 'mitjancant', 'utilitzant', 'aquet', 'aquella', 'aquelles', 'aquells',
         'primer', 'segon', 'tercer', 'correcte', 'incorrecte', 'nomes', 'molt', 'forca', 'quines', 'quins',
-        'quines', 'quina'
+        'quines', 'quina', 'el', 'la', 'els', 'les', 'un', 'una', 'uns', 'unes', 'de', 'del', 'dels', 'a', 
+        'al', 'als', 'per', 'com', 'que', 'en', 'amb', 'i', 'o', 'no', 'si', 'mes', 'pero', 'seus', 'seva', 
+        'seves', 'seu', 'teu', 'teva', 'meu', 'meva', 'pel', 'pels', 'on', 'hi', 'ho', 'li', 'ens', 'us', 
+        'em', 'et', 'es', 'sha', 'shan', 'ha', 'han', 'pot', 'ser', 'estar', 'saber', 'fer', 'veure', 'tenir',
+        'diferents', 'aquesta', 'aquests', 'aquestes', 'cada', 'sota', 'contra', 'entre', 'durant', 'mentre'
     ]);
     
-    // Extreure llista de paraules del model (>4 lletres i no comunes)
+    // Conceptes clau cloud predefinits (normalitzats)
+    const conceptesPredefinits = [
+        "load balancer", "balancejador de carrega", "balancejador carrega",
+        "active directory", "directori actiu",
+        "storage account", "compte de emmagatzematge", "compte emmagatzematge",
+        "virtual machine", "maquina virtual", "maquines virtuals",
+        "traffic manager", "gestor de transit",
+        "application gateway", "pasarel·la de aplicacio", "pasarela de aplicacio",
+        "hub and spoke", "concentrador i raigs",
+        "expressroute", "express route",
+        "vpn gateway", "pasarel·la vpn", "pasarela vpn",
+        "private link", "enllac privat",
+        "private endpoint", "punt de extrem privat", "punt extrem privat", "punts de extrem privats",
+        "sql database", "base de dades sql", "base dades sql",
+        "key vault", "magatzem de claus",
+        "cosmos db", "cosmos database",
+        "availability zone", "zona de disponibilitat", "zones de disponibilitat",
+        "disaster recovery", "recuperacio de desastres", "recuperacio davant desastres",
+        "high availability", "alta disponibilitat",
+        "network security group", "grup de seguretat de xarxa", "grup seguretat xarxa", "nsg",
+        "route table", "taula de rutes", "taules de rutes",
+        "virtual network", "xarxa virtual", "xarxes virtuals", "vnet",
+        "resource group", "grup de recursos", "grups de recursos",
+        "cognitive services", "serveis cognitius",
+        "app service", "servei de aplicacions",
+        "function app", "aplicacio de funcions", "aplicacio funcions",
+        "api management", "gestio de apis",
+        "event grid", "quadricula de esdeveniments",
+        "event hubs", "concentradors de esdeveniments",
+        "service bus", "bus de servei",
+        "log analytics", "analisi de registres",
+        "site recovery", "recuperacio de llocs",
+        "ddos protection", "proteccio ddos",
+        "firewall policy", "politica de cortafocs", "politica de firewall",
+        "managed identity", "identitat gestionada", "identitats gestionades",
+        "role based", "basat en rols",
+        "access control", "control de acces",
+        "rbac",
+        "multi factor", "multifactor", "mfa"
+    ];
+
+    // 1. Detecció de conceptes cloud predefinits coincidents
+    const conceptesPredefinitsTrobats = conceptesPredefinits.filter(concept => {
+        return textModel.includes(concept) && textUsuari.includes(concept);
+    });
+
+    // 2. Extracció dinàmica de bigrames del model i detecció
+    const paraulesModelOriginals = textModel.split(/\s+/).map(w => w.trim()).filter(w => w.length > 0);
+    const bigramesModel = [];
+    for (let i = 0; i < paraulesModelOriginals.length - 1; i++) {
+        const w1 = paraulesModelOriginals[i];
+        const w2 = paraulesModelOriginals[i + 1];
+        
+        // Un bigrama és vàlid si cap dels dos és stop-word i almenys un té >= 4 caràcters
+        if (!paraulesStop.has(w1) && !paraulesStop.has(w2) && (w1.length >= 4 || w2.length >= 4)) {
+            bigramesModel.push(`${w1} ${w2}`);
+        }
+    }
+    const bigramesUnicsModel = [...new Set(bigramesModel)];
+    const bigramesTrobats = bigramesUnicsModel.filter(bigrama => textUsuari.includes(bigrama));
+
+    // Combinar tots els conceptes encadenats
+    const totsConceptesEncadenats = [...new Set([...conceptesPredefinitsTrobats, ...bigramesTrobats])];
+
+    // 3. Extracció de paraules clau individuals (>4 lletres i no comunes)
     const paraulesModel = textModel.split(/\s+/)
         .map(w => w.trim())
-        .filter(w => w.length > 4 && !paraulesComuns.has(w));
+        .filter(w => w.length > 4 && !paraulesStop.has(w));
         
     const paraulesUniquesModel = [...new Set(paraulesModel)];
-    
-    // Buscar quines d'aquestes paraules clau es troben a la resposta de l'usuari
     const paraulesTrobades = paraulesUniquesModel.filter(paraula => textUsuari.includes(paraula));
+
+    // --- CRITERIS STRICTS D'AVALUACIÓ ---
+    // A) Paraules clau: Exigim almenys el 22% de coincidència global de paraules individuals I un mínim de 3 paraules clau (o el total de paraules si és curt)
+    const minimParaulesClau = Math.min(3, paraulesUniquesModel.length);
+    const taxaCoincidenciaParaules = paraulesUniquesModel.length > 0 ? (paraulesTrobades.length / paraulesUniquesModel.length) : 0;
+    const compleixParaulesClau = paraulesTrobades.length >= minimParaulesClau && taxaCoincidenciaParaules >= 0.22;
+
+    // B) Conceptes encadenats: Si el model té bigrames o conceptes predefinits, exigim que almenys en tingui 1 (o 2 si és un model llarg i complex de >4 conceptes)
+    const conceptesDelModel = [...new Set([
+        ...conceptesPredefinits.filter(c => textModel.includes(c)),
+        ...bigramesUnicsModel
+    ])];
     
-    // Exigim almenys el 15% de coincidència o com a mínim 2 paraules clau (1 si el model és molt curt)
-    const minimCoincidencies = Math.min(2, Math.max(1, Math.floor(paraulesUniquesModel.length * 0.15)));
-    
+    let compleixConceptesEncadenats = true;
+    let minimConceptes = 0;
+    if (conceptesDelModel.length > 0) {
+        minimConceptes = conceptesDelModel.length >= 4 ? 2 : 1;
+        compleixConceptesEncadenats = totsConceptesEncadenats.length >= minimConceptes;
+    }
+
+    const esCert = compleixParaulesClau && compleixConceptesEncadenats;
+
     return {
-        esCert: paraulesTrobades.length >= minimCoincidencies,
-        paraulesTrobades: paraulesTrobades
+        esCert: esCert,
+        paraulesTrobades: paraulesTrobades,
+        conceptesEncadenats: totsConceptesEncadenats,
+        minimParaulesClau: minimParaulesClau,
+        minimConceptes: minimConceptes
     };
 }
 
