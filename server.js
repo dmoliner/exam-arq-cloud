@@ -73,16 +73,31 @@ app.post('/api/stats', (req, res) => {
 // API d'Autenticació
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
-    if (username === USER_ADMIN && password === PASS_ADMIN) {
-        // Establir la cookie de sessió (vàlida per 2 hores)
-        res.cookie('admin_session', 'authenticated_token_123', { httpOnly: true, maxAge: 2 * 60 * 60 * 1000 });
-        return res.json({ success: true });
+    if (!username || username.trim() === '') {
+        return res.status(400).json({ success: false, message: 'El nom d\'usuari és obligatori' });
     }
-    return res.status(401).json({ success: false, message: 'Usuari o contrasenya incorrectes' });
+
+    const normalizedUser = username.toLowerCase().trim();
+
+    // Si conté "admin", es valida contra les credencials d'administrador
+    if (normalizedUser.includes('admin')) {
+        if (username === USER_ADMIN && password === PASS_ADMIN) {
+            // Establir la cookie de sessió d'administrador (vàlida per 2 hores)
+            res.cookie('admin_session', 'authenticated_token_123', { httpOnly: true, maxAge: 2 * 60 * 60 * 1000 });
+            return res.json({ success: true, redirect: '/admin' });
+        }
+        return res.status(401).json({ success: false, message: 'Usuari o contrasenya d\'administrador incorrectes' });
+    }
+
+    // Per a qualsevol altre usuari (estudiant), es dóna accés directe al seu rendiment
+    // Establir cookie amb el nom de l'usuari per a personalització (vàlida per 30 dies)
+    res.cookie('user_name', username.trim(), { maxAge: 30 * 24 * 60 * 60 * 1000 });
+    return res.json({ success: true, redirect: '/rendiment' });
 });
 
 app.get('/api/logout', (req, res) => {
     res.clearCookie('admin_session');
+    res.clearCookie('user_name');
     res.redirect('/login');
 });
 

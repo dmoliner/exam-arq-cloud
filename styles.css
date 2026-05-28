@@ -1242,30 +1242,34 @@ button:hover .icon-right {
     margin-top: 1.5rem;
 }
 
-/* Enllaç Admin discret a la pàgina principal */
-.admin-access-footer {
-    text-align: center;
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--bg-card-border);
-}
-
-.link-admin-discret {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-decoration: none;
-    display: inline-flex;
+/* Icona d'Usuari / Perfil discret per al Login unificat */
+.btn-user-profile {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 42px;
+    height: 42px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    border-radius: 50%;
+    display: flex;
     align-items: center;
-    gap: 0.35rem;
+    justify-content: center;
+    cursor: pointer;
     transition: var(--transition-smooth);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
 }
 
-.link-admin-discret:hover {
-    color: var(--color-cloud-blue);
+.btn-user-profile:hover {
+    background: var(--color-selected-bg);
+    border-color: var(--color-selected-border);
+    color: var(--color-selected-text);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(2, 132, 199, 0.1);
 }
 
-.link-admin-discret svg {
-    width: 14px;
-    height: 14px;
+.btn-user-profile svg {
+    width: 22px;
+    height: 22px;
 }
