@@ -1287,8 +1287,8 @@ button:hover .icon-right {
     height: 22px;
 }
 
-/* Responsive adjustments for Rendiment & Admin views on Mobile (max-width: 768px) */
-@media (max-width: 768px) {
+/* Responsive adjustments for Rendiment & Admin views on Mobile & Tablets (max-width: 1024px) */
+@media (max-width: 1024px) {
     .admin-body {
         padding: 1rem 0.75rem;
     }
@@ -1329,12 +1329,13 @@ button:hover .icon-right {
     }
     
     .admin-stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
         gap: 1rem;
         margin-bottom: 1.5rem;
     }
     
     .stat-card {
+        width: 100%;
         padding: 1.25rem;
         gap: 1rem;
     }
