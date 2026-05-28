@@ -3,18 +3,18 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const statsFilePath = path.join(__dirname, 'stats.json');
 
-// Credencials de la base de dades de 2 usuaris obtingudes de variables d'entorn d'Azure
-const USER_ADMIN = process.env.user_admin || 'admin';
-const PASS_ADMIN = process.env.pass_admin || 'admin123';
-const USER_STUDENT = process.env.user1 || 'user1';
-const PASS_STUDENT = process.env.pass_user1 || 'user123';
+// Credencials de la base de dades de 2 usuaris obtingudes de variables d'entorn d'Azure (sense contrasenyes per defecte al codi)
+const USER_ADMIN = process.env.user_admin;
+const PASS_ADMIN = process.env.pass_admin;
+const USER_STUDENT = process.env.user1;
+const PASS_STUDENT = process.env.pass_user1;
 
-if (!process.env.user_admin || !process.env.pass_admin || !process.env.user1 || !process.env.pass_user1) {
-    console.warn(`[⚠️ SEGURETAT] Faltes variables d'entorn d'Azure (user_admin, pass_admin, user1, pass_user1). S'estan utilitzant els valors de seguretat per defecte.`);
+if (!USER_ADMIN || !PASS_ADMIN || !USER_STUDENT || !PASS_STUDENT) {
+    console.error(`[❌ SEGURETAT] Faltes variables d'entorn d'Azure obligatòries (user_admin, pass_admin, user1, pass_user1). L'accés romandrà bloquejat fins que estiguin definides.`);
 }
 
 // Middleware per parsejar JSON en peticions POST/PUT
