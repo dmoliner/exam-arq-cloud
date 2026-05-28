@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>Accés Administrador - Simulador Cloud</title>
+</head>
+<body class="login-body">
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                </div>
+                <h2>Espai Administració</h2>
+                <p>Introdueix les teves credencials de seguretat per gestionar les preguntes</p>
+            </div>
+
+            <div id="error-box" class="error-notification hidden"></div>
+
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="username">Usuari administrador</label>
+                    <input type="text" id="username" placeholder="Introdueix l'usuari" required autocomplete="username">
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Contrasenya</label>
+                    <input type="password" id="password" placeholder="Introdueix la contrasenya" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" id="btn-login-submit">
+                    Accedir al panell
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="btn-icon icon-right" style="width: 18px; height: 18px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <a href="/">← Tornar al Simulador Públic</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorBox = document.getElementById('error-box');
+            const submitBtn = document.getElementById('btn-login-submit');
+
+            // Estat de càrrega visual
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Verificant...';
+            errorBox.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    // Login correcte, redirigir a l'admin panel
+                    window.location.href = '/admin';
+                } else {
+                    // Mostrar error
+                    errorBox.innerText = data.message || 'Error de validació de credencials';
+                    errorBox.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `Accedir al panell <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="btn-icon icon-right" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>`;
+                }
+            } catch (err) {
+                console.error(err);
+                errorBox.innerText = 'S\'ha produït un error en connectar amb el servidor';
+                errorBox.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `Accedir al panell <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="btn-icon icon-right" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>`;
+            }
+        };
+    </script>
+</body>
+</html>
