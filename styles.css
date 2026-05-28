@@ -903,6 +903,10 @@ button:hover .icon-right {
    Admin Panel Styles
    ========================================== */
 .admin-body {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
     background-color: #f8fafc;
     min-height: 100vh;
     padding: 2rem;
@@ -1290,7 +1294,7 @@ button:hover .icon-right {
 /* Responsive adjustments for Rendiment & Admin views on Mobile & Tablets (max-width: 1024px) */
 @media (max-width: 1024px) {
     .admin-body {
-        padding: 1rem 0.75rem;
+        padding: 1rem 0.75rem !important;
     }
     
     .admin-header {
