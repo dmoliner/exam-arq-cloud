@@ -905,11 +905,20 @@ button:hover .icon-right {
 .admin-body {
     display: flex !important;
     flex-direction: column !important;
-    align-items: stretch !important;
+    align-items: center !important; /* Centrar horitzontalment els fills */
     justify-content: flex-start !important;
     background-color: #f8fafc;
     min-height: 100vh;
     padding: 2rem;
+}
+
+/* Forçar amplada màxima amb marges laterals a dreta i esquerra en pantalles grans */
+.admin-header,
+.admin-stats-grid,
+.admin-grid,
+.admin-panel-card {
+    width: 100% !important;
+    max-width: 1200px !important;
 }
 
 .admin-header {
