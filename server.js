@@ -186,6 +186,10 @@ app.get('/admin', requireAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
+app.get('/rendiment', (req, res) => {
+    res.sendFile(path.join(__dirname, 'rendiment.html'));
+});
+
 app.get('/styles.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'styles.css'));
 });

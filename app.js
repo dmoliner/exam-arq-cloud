@@ -6,7 +6,6 @@ let currentMode = ''; // 'test' o 'flashcard'
 
 // Esdeveniment inicial al carregar el DOM
 document.addEventListener('DOMContentLoaded', () => {
-    carregarHistoricGlobal();
     
     // Inicialitzar botons específics de Flashcard    document.getElementById('btn-comprovar').onclick = () => {
         const q = examen[indexActual];
@@ -213,35 +212,7 @@ function avaluarRespostaAutomatica(respostaUsuari, justificacioModel) {
     };
 }
 
-// Funció per carregar el rendiment històric general a la pantalla d'inici
-async function carregarHistoricGlobal() {
-    const stats = await obtenirStatsDiaries();
-    const dates = Object.keys(stats);
-    if (dates.length === 0) {
-        document.getElementById('diari-buit-menu').classList.remove('hidden');
-        document.getElementById('diari-buit-menu').style.display = 'block';
-        document.getElementById('diari-grafic-wrapper-menu').classList.add('hidden');
-        document.getElementById('diari-grafic-wrapper-menu').style.display = 'none';
-    } else {
-        document.getElementById('diari-buit-menu').classList.add('hidden');
-        document.getElementById('diari-buit-menu').style.display = 'none';
-        document.getElementById('diari-grafic-wrapper-menu').classList.remove('hidden');
-        document.getElementById('diari-grafic-wrapper-menu').style.display = 'flex';
-        dibuixarDiari('historicChartMenu', stats);
-        
-        let totalProves = 0;
-        let totalEncerts = 0;
-        let totalPreguntes = 0;
-        dates.forEach(d => {
-            totalProves += stats[d].provesFetes;
-            totalEncerts += stats[d].encertsTotals;
-            totalPreguntes += stats[d].preguntesTotals;
-        });
-        
-        const percentatgeGlobal = totalPreguntes > 0 ? ((totalEncerts / totalPreguntes) * 100).toFixed(1) : 0;
-        document.getElementById('proves-fetes-text-menu').innerHTML = `<b>${totalProves}</b> ${totalProves === 1 ? 'prova feta' : 'proves fetes'} &nbsp;|&nbsp; Mitjana: <b>${percentatgeGlobal}% encerts</b>`;
-    }
-}
+
 
 // Funció per escollir el mode des del menú
 async function iniciarMode(mode) {
@@ -266,8 +237,6 @@ function tornarAlMenu() {
     document.getElementById('quiz-container').classList.add('hidden');
     document.getElementById('progres-screen').classList.add('hidden');
     document.getElementById('result-screen').classList.add('hidden');
-    
-    carregarHistoricGlobal();
 }
 
 function registrarAvaluacioFlashcard(esCorrecte) {
