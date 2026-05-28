@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>Accés - Simulador Cloud</title>
+</head>
+<body class="login-body">
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <h2>Accés al Simulador</h2>
+                <p>Introdueix les teves credencials d'estudiant o d'administrador per iniciar sessió.</p>
+            </div>
+
+            <div id="error-box" class="error-notification hidden"></div>
+
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="username">Nom d'usuari</label>
+                    <input type="text" id="username" placeholder="Introdueix l'usuari" required autocomplete="username">
+                </div>
+
+                <div class="input-group" id="password-group">
+                    <label for="password">Contrasenya</label>
+                    <input type="password" id="password" placeholder="Introdueix la contrasenya" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" id="btn-login-submit">
+                    Iniciar Sessió
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="btn-icon icon-right" style="width: 18px; height: 18px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <a href="/">← Tornar al Simulador Públic</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const submitBtn = document.getElementById('btn-login-submit');
+
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            const errorBox = document.getElementById('error-box');
+
+            // Estat de càrrega visual
+            submitBtn.disabled = true;
+            const originalHtml = submitBtn.innerHTML;
+            submitBtn.innerText = 'Processant...';
+            errorBox.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    // Login correcte, redirigir segons l'encaminament dinàmic del backend (/admin o /)
+                    window.location.href = data.redirect || '/';
+                } else {
+                    // Mostrar error
+                    errorBox.innerText = data.message || 'Error de credencials';
+                    errorBox.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalHtml;
+                }
+            } catch (err) {
+                console.error(err);
+                errorBox.innerText = 'S\'ha produït un error en connectar amb el servidor';
+                errorBox.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHtml;
+            }
+        };
+    </script>
+</body>
+</html>

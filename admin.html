@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>Panell d'Administració - Simulador Cloud</title>
+</head>
+<body class="admin-body">
+
+    <!-- CAPÇALERA -->
+    <header class="admin-header">
+        <div class="admin-logo-area">
+            <span class="admin-logo-badge">Admin</span>
+            <h1>Panell de Control de Preguntes</h1>
+        </div>
+        <div class="admin-actions">
+            <a href="/" class="btn btn-secondary" style="padding: 0.6rem 1.2rem; min-height: 2.5rem; border-radius: 0.5rem; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                </svg>
+                Anar al Simulador
+            </a>
+            <a href="/api/logout" class="btn" style="background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); padding: 0.6rem 1.2rem; min-height: 2.5rem; border-radius: 0.5rem; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; border: none; box-shadow: 0 4px 10px rgba(244,63,94,0.15)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                </svg>
+                Tancar Sessió
+            </a>
+        </div>
+    </header>
+
+    <!-- TARGETES D'ESTADÍSTIQUES RÀPIDES -->
+    <section class="admin-stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value" id="stats-total-test">0</span>
+                <span class="stat-label">Preguntes Tipus Test</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value" id="stats-total-practic">0</span>
+                <span class="stat-label">Casos Pràctics (Flashcards)</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581a2.25 2.25 0 003.182 0l4.318-4.318a2.25 2.25 0 000-3.182L11.16 3.659A2.25 2.25 0 009.568 3z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+                </svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value" id="stats-total-temes">0</span>
+                <span class="stat-label">Temes / Categories</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTINGUT PRINCIPAL (GRILLA DE 2 COLUMNS) -->
+    <main class="admin-grid">
+
+        <!-- COLUMNA ESQUERRA: LLISTAT DE PREGUNTES EXISTENTS -->
+        <section class="admin-panel-card">
+            <div class="panel-header">
+                <h3>Preguntes en el Sistema</h3>
+                <div class="panel-filters">
+                    <button class="btn-filter-tab active" onclick="filtrarTipus('all', this)">Tots</button>
+                    <button class="btn-filter-tab" onclick="filtrarTipus('test', this)">Test</button>
+                    <button class="btn-filter-tab" onclick="filtrarTipus('practic', this)">Cas Pràctic</button>
+                </div>
+            </div>
+
+            <div class="search-box-wrapper">
+                <input type="text" id="admin-search" class="search-input" placeholder="Cerca preguntes per paraula clau..." oninput="filtrarCerca()">
+            </div>
+
+            <div class="q-list" id="questions-list-container">
+                <p style="text-align: center; color: var(--text-secondary); margin: 2rem 0;">Carregant el llistat de preguntes...</p>
+            </div>
+        </section>
+
+        <!-- COLUMNA DRETA: FORMULARI PER AFEGIR PREGUNTES -->
+        <section class="admin-panel-card">
+            <div class="panel-header">
+                <h3>Crear Nova Pregunta</h3>
+            </div>
+
+            <form id="add-question-form">
+                <div class="input-group">
+                    <label for="q-type">Tipus de pregunta</label>
+                    <select id="q-type" onchange="alternarCampsOpcions(this.value)">
+                        <option value="test">Tipus Test (4 opcions)</option>
+                        <option value="practic">Cas Pràctic (Desenvolupament / Flashcard)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="q-tema">Tema / Categoria</label>
+                    <input type="text" id="q-tema" placeholder="Ex: Seguretat, Alta Disponibilitat, Emmagatzematge..." required>
+                </div>
+
+                <div class="input-group">
+                    <label for="q-text">Enunciat de la pregunta</label>
+                    <textarea id="q-text" placeholder="Escriu l'enunciat o el cas tècnic aquí..." style="min-height: 100px;" required></textarea>
+                </div>
+
+                <!-- EDITOR D'OPCIONS DINÀMIQUES PER AL MODE TEST -->
+                <div id="test-options-editor" class="options-editor-container">
+                    <p class="options-editor-title">Opcions de resposta (Marca la correcta)</p>
+                    
+                    <div class="option-edit-row">
+                        <input type="radio" name="correct-option-radio" value="0" checked id="correct-opt-0">
+                        <input type="text" id="opt-text-0" placeholder="Opció A..." required>
+                    </div>
+                    
+                    <div class="option-edit-row">
+                        <input type="radio" name="correct-option-radio" value="1" id="correct-opt-1">
+                        <input type="text" id="opt-text-1" placeholder="Opció B..." required>
+                    </div>
+                    
+                    <div class="option-edit-row">
+                        <input type="radio" name="correct-option-radio" value="2" id="correct-opt-2">
+                        <input type="text" id="opt-text-2" placeholder="Opció C..." required>
+                    </div>
+                    
+                    <div class="option-edit-row">
+                        <input type="radio" name="correct-option-radio" value="3" id="correct-opt-3">
+                        <input type="text" id="opt-text-3" placeholder="Opció D..." required>
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-top: 1.25rem;">
+                    <label for="q-justificacio" id="label-justificacio">Justificació Tècnica (Solució Model)</label>
+                    <textarea id="q-justificacio" placeholder="Escriu l'explicació oficial o el model de resposta esperat..." style="min-height: 120px;" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="btn-icon" style="width:18px; height:18px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Desar Pregunta
+                </button>
+            </form>
+        </section>
+
+    </main>
+
+    <script>
+        let allQuestions = { test: [], practic: [] };
+        let currentFilter = 'all';
+        let currentSearchQuery = '';
+
+        // Carregar totes les dades al iniciar la pàgina
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarPreguntes();
+            
+            // Gestionar la submissió del formulari
+            document.getElementById('add-question-form').onsubmit = desarNovaPregunta;
+        });
+
+        // Alternar camps si és cas pràctic o test
+        function alternarCampsOpcions(type) {
+            const editor = document.getElementById('test-options-editor');
+            const labelJust = document.getElementById('label-justificacio');
+            const placeholderJust = document.getElementById('q-justificacio');
+            const optionInputs = editor.querySelectorAll('input[type="text"]');
+
+            if (type === 'practic') {
+                editor.style.display = 'none';
+                labelJust.innerText = "Solució Model Oficial (Molt detallada)";
+                placeholderJust.placeholder = "Redacta el model d'arquitectura esperat, incloent paraules clau significatives...";
+                optionInputs.forEach(input => input.removeAttribute('required'));
+            } else {
+                editor.style.display = 'block';
+                labelJust.innerText = "Justificació Tècnica";
+                placeholderJust.placeholder = "Escriu l'explicació de per què la resposta seleccionada és la correcta...";
+                optionInputs.forEach(input => input.setAttribute('required', ''));
+            }
+        }
+
+        // Petició GET al servidor per obtenir les dades
+        async function carregarPreguntes() {
+            const container = document.getElementById('questions-list-container');
+            try {
+                const response = await fetch('/api/admin/questions');
+                if (!response.ok) throw new Error("No s'han pogut obtenir les preguntes");
+                
+                allQuestions = await response.json();
+                
+                // Actualitzar targetes de resum
+                document.getElementById('stats-total-test').innerText = allQuestions.test.length;
+                document.getElementById('stats-total-practic').innerText = allQuestions.practic.length;
+                
+                // Comptar categories uniques
+                const temes = new Set();
+                allQuestions.test.forEach(q => q.tema && temes.add(q.tema.trim().toLowerCase()));
+                allQuestions.practic.forEach(q => q.tema && temes.add(q.tema.trim().toLowerCase()));
+                document.getElementById('stats-total-temes').innerText = temes.size;
+
+                renderLlistat();
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<p style="text-align: center; color: var(--color-incorrect-text); margin: 2rem 0; font-weight: 600;">⚠️ Error en carregar les dades: ${err.message}</p>`;
+            }
+        }
+
+        // Renderitzar el llistat de preguntes segons filtres i cerca
+        function renderLlistat() {
+            const container = document.getElementById('questions-list-container');
+            container.innerHTML = '';
+
+            let elementsToRender = [];
+
+            // Afegeix etiquetes de tipus per facilitar la renderització
+            if (currentFilter === 'all' || currentFilter === 'test') {
+                allQuestions.test.forEach((q, idx) => {
+                    elementsToRender.push({ ...q, type: 'test', originalIndex: idx });
+                });
+            }
+
+            if (currentFilter === 'all' || currentFilter === 'practic') {
+                allQuestions.practic.forEach((q, idx) => {
+                    elementsToRender.push({ ...q, type: 'practic', originalIndex: idx });
+                });
+            }
+
+            // Aplicar filtre de cerca per paraula
+            if (currentSearchQuery) {
+                const query = currentSearchQuery.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                elementsToRender = elementsToRender.filter(el => {
+                    const txt = el.pregunta.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    const just = (el.justificacio || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    return txt.includes(query) || just.includes(query);
+                });
+            }
+
+            if (elementsToRender.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); margin: 3rem 0;">No s'ha trobat cap pregunta coincident.</p>`;
+                return;
+            }
+
+            elementsToRender.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'q-item-card';
+
+                // Cos principal de la targeta
+                const mainArea = document.createElement('div');
+                mainArea.className = 'q-item-main';
+
+                const header = document.createElement('div');
+                header.className = 'q-item-header';
+                
+                const badgeTipus = document.createElement('span');
+                badgeTipus.className = `q-badge ${q.type}`;
+                badgeTipus.innerText = q.type === 'test' ? 'Test' : 'Cas Pràctic';
+                
+                const badgeTema = document.createElement('span');
+                badgeTema.className = 'q-badge tag-tema';
+                badgeTema.innerText = q.tema || 'Sense tema';
+
+                header.appendChild(badgeTipus);
+                header.appendChild(badgeTema);
+
+                const textPregunta = document.createElement('div');
+                textPregunta.className = 'q-text-desc';
+                // Netejar números inicials
+                textPregunta.innerText = q.pregunta.replace(/^\d+\.\s*/, '');
+
+                const textJust = document.createElement('div');
+                textJust.className = 'q-just-desc';
+                textJust.innerHTML = `<b>Explicació:</b> ${q.justificacio || 'Sense justificació tècnica.'}`;
+
+                mainArea.appendChild(header);
+                mainArea.appendChild(textPregunta);
+
+                // Preview d'opcions si és de tipus test
+                if (q.type === 'test' && q.opcions) {
+                    const optPreview = document.createElement('div');
+                    optPreview.className = 'q-options-preview';
+                    
+                    const lletres = ['A', 'B', 'C', 'D'];
+                    const opcionsNetejades = q.opcions.map((opt, i) => {
+                        const esCorrecte = i === q.respostaCorrecta;
+                        const textNet = opt.replace(/^[a-d]\)\s*/i, '');
+                        return `${esCorrecte ? '<b>' : ''}${lletres[i]}) ${textNet}${esCorrecte ? ' (Correcta)</b>' : ''}`;
+                    });
+                    optPreview.innerHTML = opcionsNetejades.join(' | ');
+                    mainArea.appendChild(optPreview);
+                }
+
+                mainArea.appendChild(textJust);
+
+                // Àrea d'accions (botó esborrar)
+                const deleteArea = document.createElement('div');
+                deleteArea.className = 'q-delete-area';
+
+                const btnDelete = document.createElement('button');
+                btnDelete.className = 'btn-delete-q';
+                btnDelete.title = 'Eliminar pregunta';
+                btnDelete.onclick = () => esborrarPregunta(q.type, q.originalIndex);
+                btnDelete.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                    </svg>
+                `;
+
+                deleteArea.appendChild(btnDelete);
+
+                card.appendChild(mainArea);
+                card.appendChild(deleteArea);
+                container.appendChild(card);
+            });
+        }
+
+        // Gestió dels fitres per tipus
+        function filtrarTipus(type, btnElement) {
+            currentFilter = type;
+            const tabs = document.querySelectorAll('.btn-filter-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderLlistat();
+        }
+
+        // Cerca en viu
+        function filtrarCerca() {
+            currentSearchQuery = document.getElementById('admin-search').value;
+            renderLlistat();
+        }
+
+        // Desar una nova pregunta (Petició POST)
+        async function desarNovaPregunta(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('q-type').value;
+            const tema = document.getElementById('q-tema').value.trim();
+            const pregunta = document.getElementById('q-text').value.trim();
+            const justificacio = document.getElementById('q-justificacio').value.trim();
+
+            let questionObj = { pregunta, tema, justificacio };
+
+            // Si és test, recollir opcions dinàmiques i opció correcta
+            if (type === 'test') {
+                const opcions = [
+                    "a) " + document.getElementById('opt-text-0').value.trim(),
+                    "b) " + document.getElementById('opt-text-1').value.trim(),
+                    "c) " + document.getElementById('opt-text-2').value.trim(),
+                    "d) " + document.getElementById('opt-text-3').value.trim(),
+                ];
+                
+                // Cercar el valor del botó de ràdio marcat per determinar la correcta
+                const radiButtons = document.getElementsByName('correct-option-radio');
+                let respostaCorrecta = 0;
+                for (let i = 0; i < radiButtons.length; i++) {
+                    if (radiButtons[i].checked) {
+                        respostaCorrecta = parseInt(radiButtons[i].value);
+                        break;
+                    }
+                }
+
+                questionObj.opcions = opcions;
+                questionObj.respostaCorrecta = respostaCorrecta;
+            }
+
+            try {
+                const response = await fetch('/api/admin/questions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, question: questionObj })
+                });
+
+                if (!response.ok) throw new Error("No s'ha pogut guardar la nova pregunta.");
+
+                alert("Pregunta desada correctament!");
+                
+                // Reiniciar el formulari
+                document.getElementById('add-question-form').reset();
+                alternarCampsOpcions(type); // Assegurar que els required s'actualitzin
+                
+                // Recarregar les dades
+                carregarPreguntes();
+            } catch (err) {
+                console.error(err);
+                alert("Error en desar la pregunta: " + err.message);
+            }
+        }
+
+        // Esborrar una pregunta pel seu tipus i index (Petició DELETE)
+        async function esborrarPregunta(type, index) {
+            const tipusCatalan = type === 'test' ? 'de Tipus Test' : 'de Cas Pràctic';
+            if (!confirm(`Estàs segur que vols eliminar permanentment aquesta pregunta ${tipusCatalan}? Aquesta acció no es pot desfer.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/questions', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, index })
+                });
+
+                if (!response.ok) throw new Error("No s'ha pogut eliminar la pregunta.");
+
+                alert("Pregunta eliminada correctament!");
+                carregarPreguntes();
+            } catch (err) {
+                console.error(err);
+                alert("Error al eliminar la pregunta: " + err.message);
+            }
+        }
+    </script>
+</body>
+</html>
