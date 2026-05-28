@@ -43,6 +43,16 @@ const requireAdmin = (req, res, next) => {
     }
 };
 
+// Middleware per protegir rutes de l'estudiant (user1)
+const requireStudent = (req, res, next) => {
+    if (req.cookies.student_session === 'authenticated_token_456') {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+};
+
+
 // API endpoints per a l'històric de proves persistent al servidor (global)
 app.get('/api/stats', (req, res) => {
     if (!fs.existsSync(statsFilePath)) {
@@ -218,7 +228,7 @@ app.get('/admin', requireAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-app.get('/rendiment', (req, res) => {
+app.get('/rendiment', requireStudent, (req, res) => {
     res.sendFile(path.join(__dirname, 'rendiment.html'));
 });
 

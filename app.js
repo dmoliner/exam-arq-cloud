@@ -21,6 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         mainStatsSection.classList.remove('hidden');
                         carregarHistoricGlobal();
                     }
+                    const menuRendimentBtn = document.getElementById('menu-rendiment-btn-wrapper');
+                    if (menuRendimentBtn) {
+                        menuRendimentBtn.classList.remove('hidden');
+                    }
                     // Adaptar botó de perfil per a tancament de sessió directe
                     if (profileBtn) {
                         profileBtn.href = '/api/logout';
@@ -42,6 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Usuari anònim, per defecte la secció de gràfics es manté oculta
                 if (mainStatsSection) {
                     mainStatsSection.classList.add('hidden');
+                }
+                const menuRendimentBtn = document.getElementById('menu-rendiment-btn-wrapper');
+                if (menuRendimentBtn) {
+                    menuRendimentBtn.classList.add('hidden');
                 }
             }
         })
