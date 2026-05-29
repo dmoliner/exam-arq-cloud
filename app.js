@@ -6,6 +6,7 @@ let currentMode = ''; // 'test' o 'flashcard'
 
 let darrerSyncTimestamp = 0;
 let isSyncing = false;
+let paginaActualHistoric = 0;
 
 // Funció per desar l'estat actual al servidor
 async function desarEstatSessio() {
@@ -429,6 +430,7 @@ function tornarAlMenuSenseSincronitzar() {
     indexActual = 0;
     respostes = new Array(50).fill(null);
     respostesCorrectesArray = new Array(50).fill(false);
+    paginaActualHistoric = 0; // Restablir a la primera pàgina dels darrers 5 dies
     
     document.getElementById('menu-container').classList.remove('hidden');
     document.getElementById('quiz-container').classList.add('hidden');
@@ -535,8 +537,26 @@ async function desarStatsDiaries(stats) {
     }
 }
 
+function actualitzarTotsElsGrafics(stats) {
+    const menuSection = document.getElementById('main-stats-section');
+    if (menuSection && !menuSection.classList.contains('hidden')) {
+        dibuixarDiari('historicChartMenu', stats);
+    }
+    const progresScreen = document.getElementById('progres-screen');
+    if (progresScreen && !progresScreen.classList.contains('hidden')) {
+        dibuixarDiari('historicChartProgres', stats);
+    }
+    const resultScreen = document.getElementById('result-screen');
+    if (resultScreen && !resultScreen.classList.contains('hidden')) {
+        dibuixarDiari('historicChartFinal', stats);
+    }
+}
+
 function dibuixarDiari(canvasId, stats) {
-    const ctx = document.getElementById(canvasId).getContext('2d');
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
     let instanceKey;
     if (canvasId === 'historicChartProgres') {
         instanceKey = 'historicChartProgresInstance';
@@ -547,11 +567,40 @@ function dibuixarDiari(canvasId, stats) {
     }
     if (window[instanceKey]) window[instanceKey].destroy();
     
+    // Configurar els controls de navegació dinàmics
+    const container = canvas.parentElement;
+    let nav = container.querySelector('.historic-nav');
+    if (!nav) {
+        nav = document.createElement('div');
+        nav.className = 'historic-nav';
+        container.insertBefore(nav, canvas);
+    }
+    
+    const titolPagina = paginaActualHistoric === 0 ? "Darrers 5 dies" : `Fa ${paginaActualHistoric * 5}-${(paginaActualHistoric * 5) + 4} dies`;
+    nav.innerHTML = `
+        <button class="btn-historic-nav prev-btn" title="Anar més enrere">◀ Anteriors</button>
+        <span class="historic-nav-title">${titolPagina}</span>
+        <button class="btn-historic-nav next-btn" title="Anar cap a avui" ${paginaActualHistoric === 0 ? 'disabled' : ''}>Posteriors ▶</button>
+    `;
+    
+    nav.querySelector('.prev-btn').onclick = () => {
+        paginaActualHistoric++;
+        actualitzarTotsElsGrafics(stats);
+    };
+    
+    nav.querySelector('.next-btn').onclick = () => {
+        if (paginaActualHistoric > 0) {
+            paginaActualHistoric--;
+            actualitzarTotsElsGrafics(stats);
+        }
+    };
+    
     const datesOrdenades = [];
     const avui = new Date();
-    for (let i = 7; i >= 0; i--) {
+    const startOffset = paginaActualHistoric * 5;
+    for (let i = 4; i >= 0; i--) {
         const d = new Date();
-        d.setDate(avui.getDate() - i);
+        d.setDate(avui.getDate() - (startOffset + i));
         const yyyy = d.getFullYear();
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const dd = String(d.getDate()).padStart(2, '0');
