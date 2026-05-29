@@ -310,9 +310,21 @@ async function inicialitzarExamen() {
         if (!response.ok) throw new Error("No s'ha pogut descarregar el catàleg de preguntes");
         const testPreguntes = await response.json();
         
-        // Triar fins a 50 preguntes aleatòries (o menys si el fitxer en té menys)
+        // Comprovar si l'usuari és públic (anònim) o autenticat per limitar les preguntes
+        let limitPreguntes = 5; // Per defecte per al simulador públic
+        try {
+            const sessioRes = await fetch('/api/session');
+            const sessioData = await sessioRes.json();
+            if (sessioData.loggedIn && (sessioData.role === 'student' || sessioData.role === 'admin')) {
+                limitPreguntes = 50; // Usuari autenticat
+            }
+        } catch (sessioErr) {
+            console.warn("No s'ha pogut comprovar la sessió, limitant a mode públic (5 preguntes):", sessioErr);
+        }
+
+        // Triar fins al límit de preguntes aleatòries (o menys si el fitxer en té menys)
         examen = [...testPreguntes].sort(() => 0.5 - Math.random());
-        const totalAprovades = Math.min(examen.length, 50);
+        const totalAprovades = Math.min(examen.length, limitPreguntes);
         examen = examen.slice(0, totalAprovades);
         
         respostes = new Array(examen.length).fill(null);
@@ -879,28 +891,33 @@ async function mostrarResultats() {
     document.getElementById('final-score').innerHTML = `Nota Final: <b>${((encerts / examen.length) * 10).toFixed(2)} / 10</b>`;
     dibuixar('donutChartFinal', encerts, examen.length);
     
-    // Desa automàticament les estadístiques al servidor al finalitzar el test
+    // Desa automàticament les estadístiques al servidor al finalitzar el test (només si l'usuari està autenticat)
     try {
-        const stats = await obtenirStatsDiaries();
-        // Obtenir data local en format YYYY-MM-DD
-        const avuiObj = new Date();
-        const yyyy = avuiObj.getFullYear();
-        const mm = String(avuiObj.getMonth() + 1).padStart(2, '0');
-        const dd = String(avuiObj.getDate()).padStart(2, '0');
-        const avui = `${yyyy}-${mm}-${dd}`;
+        const sessioRes = await fetch('/api/session');
+        const sessioData = await sessioRes.json();
         
-        if (!stats[avui]) {
-            stats[avui] = {
-                provesFetes: 0,
-                encertsTotals: 0,
-                preguntesTotals: 0
-            };
+        if (sessioData.loggedIn && (sessioData.role === 'student' || sessioData.role === 'admin')) {
+            const stats = await obtenirStatsDiaries();
+            // Obtenir data local en format YYYY-MM-DD
+            const avuiObj = new Date();
+            const yyyy = avuiObj.getFullYear();
+            const mm = String(avuiObj.getMonth() + 1).padStart(2, '0');
+            const dd = String(avuiObj.getDate()).padStart(2, '0');
+            const avui = `${yyyy}-${mm}-${dd}`;
+            
+            if (!stats[avui]) {
+                stats[avui] = {
+                    provesFetes: 0,
+                    encertsTotals: 0,
+                    preguntesTotals: 0
+                };
+            }
+            stats[avui].provesFetes += 1;
+            stats[avui].encertsTotals += encerts;
+            stats[avui].preguntesTotals += examen.length;
+            
+            await desarStatsDiaries(stats);
         }
-        stats[avui].provesFetes += 1;
-        stats[avui].encertsTotals += encerts;
-        stats[avui].preguntesTotals += examen.length;
-        
-        await desarStatsDiaries(stats);
     } catch (e) {
         console.error("Error al desar les estadístiques automàticament:", e);
     }
