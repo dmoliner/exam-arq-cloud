@@ -13,21 +13,26 @@ const URL_SAS_BLOB = process.env.URL_SAS_BLOB;
 const TOKEN_SAS_BLOB = process.env.TOKEN_SAS_BLOB;
 
 let containerClient = null;
-if (URL_SAS_BLOB && TOKEN_SAS_BLOB) {
+if (URL_SAS_BLOB) {
     try {
-        let sasToken = TOKEN_SAS_BLOB.trim();
-        if (sasToken && !sasToken.startsWith('?')) {
-            sasToken = '?' + sasToken;
+        let containerSasUrl = URL_SAS_BLOB.trim();
+        
+        // Si la URL no conté ja els paràmetres SAS (?) i s'ha especificat un TOKEN_SAS_BLOB per separat
+        if (!containerSasUrl.includes('?') && TOKEN_SAS_BLOB) {
+            let sasToken = TOKEN_SAS_BLOB.trim();
+            if (sasToken && !sasToken.startsWith('?')) {
+                sasToken = '?' + sasToken;
+            }
+            containerSasUrl = `${containerSasUrl}${sasToken}`;
         }
-        // Combinar la URL base del contenidor i el token SAS amb format correcte
-        const containerSasUrl = `${URL_SAS_BLOB.trim()}${sasToken}`;
+        
         containerClient = new ContainerClient(containerSasUrl);
-        console.log(`[☁️ AZURE STORAGE] Connectat correctament al Blob Storage mitjançant URL i Token SAS.`);
+        console.log(`[☁️ AZURE STORAGE] Connectat correctament al Blob Storage d'Azure (amb firma SAS).`);
     } catch (err) {
-        console.error(`[❌ AZURE STORAGE] Error al connectar amb el Blob Storage mitjançant SAS:`, err.message);
+        console.error(`[❌ AZURE STORAGE] Error al connectar amb el Blob Storage:`, err.message);
     }
 } else {
-    console.log(`[💻 LOCAL STORAGE] No s'han detectat URL_SAS_BLOB i TOKEN_SAS_BLOB. L'aplicació funcionarà amb els fitxers locals.`);
+    console.log(`[💻 LOCAL STORAGE] No s'ha detectat URL_SAS_BLOB. L'aplicació funcionarà amb els fitxers locals.`);
 }
 
 // Funció per determinar el nom del blob (camí complet) a Azure Blob Storage
