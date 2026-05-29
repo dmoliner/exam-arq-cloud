@@ -1,11 +1,99 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const { BlobServiceClient } = require('@azure/storage-blob');
 const app = express();
 
 const PORT = process.env.PORT || 3001;
 
 const statsFilePath = path.join(__dirname, 'stats.json');
+
+// Configurar Azure Blob Storage
+const AZURE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
+const CONTAINER_NAME = process.env.AZURE_STORAGE_CONTAINER_NAME || 'exams-cloud';
+
+let containerClient = null;
+if (AZURE_CONNECTION_STRING) {
+    try {
+        const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_CONNECTION_STRING);
+        containerClient = blobServiceClient.getContainerClient(CONTAINER_NAME);
+        console.log(`[☁️ AZURE STORAGE] Connectat al contenidor de blobs: ${CONTAINER_NAME}`);
+    } catch (err) {
+        console.error(`[❌ AZURE STORAGE] Error al connectar amb Blob Storage:`, err.message);
+    }
+} else {
+    console.log(`[💻 LOCAL STORAGE] No s'ha detectat la cadena de connexió d'Azure Blob Storage. L'aplicació funcionarà amb els fitxers locals.`);
+}
+
+// Funcions asíncrones per llegir/escriure fitxers de preguntes amb fallback
+async function readQuestions(filename) {
+    const localPath = path.join(__dirname, filename);
+    
+    if (containerClient) {
+        try {
+            const blockBlobClient = containerClient.getBlockBlobClient(filename);
+            const exists = await blockBlobClient.exists();
+            if (exists) {
+                const downloadBlockBlobResponse = await blockBlobClient.download(0);
+                const streamToString = async (readableStream) => {
+                    return new Promise((resolve, reject) => {
+                        const chunks = [];
+                        readableStream.on("data", (data) => {
+                            chunks.push(data.toString());
+                        });
+                        readableStream.on("end", () => {
+                            resolve(chunks.join(""));
+                        });
+                        readableStream.on("error", reject);
+                    });
+                };
+                const dataStr = await streamToString(downloadBlockBlobResponse.readableStreamBody);
+                return JSON.parse(dataStr);
+            } else {
+                console.warn(`[☁️ AZURE STORAGE] El blob ${filename} no existeix a Azure. Intentant inicialitzar amb el disc local...`);
+                if (fs.existsSync(localPath)) {
+                    const localData = JSON.parse(fs.readFileSync(localPath, 'utf8'));
+                    await writeQuestions(filename, localData);
+                    return localData;
+                }
+                return [];
+            }
+        } catch (err) {
+            console.error(`[❌ AZURE STORAGE] Error llegint blob ${filename} de Azure:`, err.message);
+            if (fs.existsSync(localPath)) {
+                return JSON.parse(fs.readFileSync(localPath, 'utf8'));
+            }
+            return [];
+        }
+    }
+    
+    if (fs.existsSync(localPath)) {
+        try {
+            return JSON.parse(fs.readFileSync(localPath, 'utf8'));
+        } catch (e) {
+            console.error(`Error parsejant el fitxer local ${filename}:`, e);
+            return [];
+        }
+    }
+    return [];
+}
+
+async function writeQuestions(filename, data) {
+    const localPath = path.join(__dirname, filename);
+    const dataStr = JSON.stringify(data, null, 2);
+    
+    if (containerClient) {
+        try {
+            const blockBlobClient = containerClient.getBlockBlobClient(filename);
+            await blockBlobClient.upload(dataStr, dataStr.length);
+            console.log(`[☁️ AZURE STORAGE] Blob ${filename} actualitzat amb èxit a Azure.`);
+        } catch (err) {
+            console.error(`[❌ AZURE STORAGE] Error al desar blob ${filename} a Azure:`, err.message);
+        }
+    }
+    
+    fs.writeFileSync(localPath, dataStr, 'utf8');
+}
 
 // Credencials de la base de dades de 2 usuaris obtingudes de variables d'entorn d'Azure (sense contrasenyes per defecte al codi)
 const USER_ADMIN = process.env.user_admin;
@@ -129,90 +217,62 @@ app.get('/api/session', (req, res) => {
 });
 
 // API GET: Llistar totes les preguntes de test i casos pràctics per a gestió
-app.get('/api/admin/questions', requireAdmin, (req, res) => {
-    const preguntesTestPath = path.join(__dirname, 'preguntes.json');
-    const preguntesPracticPath = path.join(__dirname, 'preguntes-caspractic.json');
-
-    let preguntesTest = [];
-    let preguntesPractic = [];
-
+app.get('/api/admin/questions', requireAdmin, async (req, res) => {
     try {
-        if (fs.existsSync(preguntesTestPath)) {
-            preguntesTest = JSON.parse(fs.readFileSync(preguntesTestPath, 'utf8'));
-        }
-    } catch (e) { console.error("Error llegint preguntes.json", e); }
-
-    try {
-        if (fs.existsSync(preguntesPracticPath)) {
-            preguntesPractic = JSON.parse(fs.readFileSync(preguntesPracticPath, 'utf8'));
-        }
-    } catch (e) { console.error("Error llegint preguntes-caspractic.json", e); }
-
-    res.json({
-        test: preguntesTest,
-        practic: preguntesPractic
-    });
+        const preguntesTest = await readQuestions('preguntes.json');
+        const preguntesPractic = await readQuestions('preguntes-caspractic.json');
+        res.json({
+            test: preguntesTest,
+            practic: preguntesPractic
+        });
+    } catch (e) {
+        console.error("Error al llistar les preguntes per a gestió", e);
+        res.status(500).send("Error de servidor");
+    }
 });
 
 // API POST: Afegir una nova pregunta al fitxer corresponent
-app.post('/api/admin/questions', requireAdmin, (req, res) => {
+app.post('/api/admin/questions', requireAdmin, async (req, res) => {
     const { type, question } = req.body;
     if (!type || !question) {
         return res.status(400).send("Dades incompletes");
     }
 
-    const filePath = type === 'test' 
-        ? path.join(__dirname, 'preguntes.json') 
-        : path.join(__dirname, 'preguntes-caspractic.json');
+    const filename = type === 'test' ? 'preguntes.json' : 'preguntes-caspractic.json';
 
-    fs.readFile(filePath, 'utf8', (err, data) => {
-        let list = [];
-        if (!err && data) {
-            try { list = JSON.parse(data); } catch(e) {}
-        }
-        
+    try {
+        const list = await readQuestions(filename);
         list.push(question);
-        
-        fs.writeFile(filePath, JSON.stringify(list, null, 2), 'utf8', (err) => {
-            if (err) {
-                console.error("Error al desar la pregunta", err);
-                return res.status(500).send("Error de servidor");
-            }
-            res.json({ success: true });
-        });
-    });
+        await writeQuestions(filename, list);
+        res.json({ success: true });
+    } catch (e) {
+        console.error("Error al desar la pregunta", e);
+        res.status(500).send("Error de servidor");
+    }
 });
 
 // API DELETE: Eliminar una pregunta pel seu índex i tipus
-app.delete('/api/admin/questions', requireAdmin, (req, res) => {
+app.delete('/api/admin/questions', requireAdmin, async (req, res) => {
     const { type, index } = req.body;
     if (type === undefined || index === undefined) {
         return res.status(400).send("Falten paràmetres de tipus o índex");
     }
 
-    const filePath = type === 'test' 
-        ? path.join(__dirname, 'preguntes.json') 
-        : path.join(__dirname, 'preguntes-caspractic.json');
+    const filename = type === 'test' ? 'preguntes.json' : 'preguntes-caspractic.json';
 
-    fs.readFile(filePath, 'utf8', (err, data) => {
-        if (err || !data) return res.status(500).send("Error llegint el fitxer");
-        let list = [];
-        try { list = JSON.parse(data); } catch(e) { return res.status(500).send("Error parsejant el fitxer"); }
-        
+    try {
+        const list = await readQuestions(filename);
         if (index < 0 || index >= list.length) {
             return res.status(400).send("Índex de pregunta fora de rang");
         }
         
         list.splice(index, 1);
-        
-        fs.writeFile(filePath, JSON.stringify(list, null, 2), 'utf8', (err) => {
-            if (err) {
-                console.error("Error al guardar modificacions", err);
-                return res.status(500).send("Error de servidor");
-            }
-            res.json({ success: true });
-        });
-    });
+        await writeQuestions(filename, list);
+        res.json({ success: true });
+    } catch (e) {
+        console.error("Error al eliminar la pregunta", e);
+        res.status(500).send("Error de servidor");
+    }
 });
 
 // Servir archivos estáticos explícitos para máxima seguridad
@@ -236,12 +296,22 @@ app.get('/styles.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'styles.css'));
 });
 
-app.get('/preguntes.json', (req, res) => {
-    res.sendFile(path.join(__dirname, 'preguntes.json'));
+app.get('/preguntes.json', async (req, res) => {
+    try {
+        const data = await readQuestions('preguntes.json');
+        res.json(data);
+    } catch (err) {
+        res.status(500).send("Error de servidor");
+    }
 });
 
-app.get('/preguntes-caspractic.json', (req, res) => {
-    res.sendFile(path.join(__dirname, 'preguntes-caspractic.json'));
+app.get('/preguntes-caspractic.json', async (req, res) => {
+    try {
+        const data = await readQuestions('preguntes-caspractic.json');
+        res.json(data);
+    } catch (err) {
+        res.status(500).send("Error de servidor");
+    }
 });
 
 app.get('/app.js', (req, res) => {
