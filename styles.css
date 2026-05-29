@@ -489,6 +489,14 @@ button:hover .icon-right {
     .btn-success, .btn-danger {
         width: 100%;
     }
+    
+    .historic-chart-container {
+        margin-bottom: 2.5rem !important;
+    }
+    
+    .proves-fetes-badge {
+        margin-top: 1.5rem !important;
+    }
 }
 
 /* Utilitats */
