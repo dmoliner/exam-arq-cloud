@@ -202,12 +202,52 @@ app.post('/api/login', (req, res) => {
     return res.status(401).json({ success: false, message: 'Usuari o contrasenya incorrectes' });
 });
 
+// Estat actiu de la sessió de l'usuari per a la sincronització entre dispositius
+let activeUserStates = {};
+
 app.get('/api/logout', (req, res) => {
+    const username = req.cookies.user_name || USER_STUDENT;
+    delete activeUserStates[username];
     res.clearCookie('admin_session');
     res.clearCookie('student_session');
     res.clearCookie('user_name');
     res.redirect('/login');
 });
+
+// API per desar l'estat de la sessió de test activa de l'estudiant
+app.post('/api/sync-state', requireStudent, (req, res) => {
+    const { examen, indexActual, respostes, respostesCorrectesArray, currentMode, timestamp } = req.body;
+    const username = req.cookies.user_name || USER_STUDENT;
+    
+    activeUserStates[username] = {
+        examen,
+        indexActual,
+        respostes,
+        respostesCorrectesArray,
+        currentMode,
+        timestamp: timestamp || Date.now()
+    };
+    res.sendStatus(200);
+});
+
+// API per obtenir l'estat de la sessió de test activa de l'estudiant
+app.get('/api/sync-state', requireStudent, (req, res) => {
+    const username = req.cookies.user_name || USER_STUDENT;
+    const state = activeUserStates[username];
+    if (state) {
+        res.json(state);
+    } else {
+        res.status(404).json({ message: "No active test state found" });
+    }
+});
+
+// API per esborrar l'estat de la sessió de test
+app.delete('/api/sync-state', requireStudent, (req, res) => {
+    const username = req.cookies.user_name || USER_STUDENT;
+    delete activeUserStates[username];
+    res.sendStatus(200);
+});
+
 
 // API per consultar l'estat actual de la sessió de l'usuari
 app.get('/api/session', (req, res) => {
