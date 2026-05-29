@@ -348,13 +348,16 @@ async function inicialitzarExamen() {
 
         // Triar fins al límit de preguntes aleatòries (o menys si el fitxer en té menys)
         examen = [...testPreguntes].sort(() => 0.5 - Math.random());
+        if (examen.length === 0) {
+            throw new Error("No s'ha trobat cap pregunta al catàleg del servidor. Comprova que hagis carregat correctament els fitxers .json a l'Azure Blob Storage de destí (o al disc local).");
+        }
         const totalAprovades = Math.min(examen.length, limitPreguntes);
         examen = examen.slice(0, totalAprovades);
         
         respostes = new Array(examen.length).fill(null);
         respostesCorrectesArray = new Array(examen.length).fill(false);
         indexActual = 0;
-
+ 
         // Alternar/barrejar l'ordre de les possibles respostes en iniciar si estem en mode test
         if (currentMode === 'test') {
             examen.forEach(q => {
@@ -368,11 +371,11 @@ async function inicialitzarExamen() {
                 }
             });
         }
-
+ 
         carregar();
     } catch (e) {
         console.error("Error carregant les preguntes:", e);
-        document.getElementById('question-text').innerText = "Error en carregar les preguntes del simulador. Si us plau, recarrega la pàgina per tornar-ho a provar.";
+        document.getElementById('question-text').innerText = "⚠️ Error al simulador: " + e.message;
     }
 }
 

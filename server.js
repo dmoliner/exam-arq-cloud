@@ -1,28 +1,49 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const { BlobServiceClient } = require('@azure/storage-blob');
+const { ContainerClient } = require('@azure/storage-blob');
 const app = express();
 
 const PORT = process.env.PORT || 3001;
 
 const statsFilePath = path.join(__dirname, 'stats.json');
 
-// Configurar Azure Blob Storage
-const AZURE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
-const CONTAINER_NAME = process.env.AZURE_STORAGE_CONTAINER_NAME || 'exams-cloud';
+// Configurar Azure Blob Storage mitjançant URL i Token SAS obtinguts de les variables d'entorn
+const URL_SAS_BLOB = process.env.URL_SAS_BLOB;
+const TOKEN_SAS_BLOB = process.env.TOKEN_SAS_BLOB;
 
 let containerClient = null;
-if (AZURE_CONNECTION_STRING) {
+if (URL_SAS_BLOB) {
     try {
-        const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_CONNECTION_STRING);
-        containerClient = blobServiceClient.getContainerClient(CONTAINER_NAME);
-        console.log(`[☁️ AZURE STORAGE] Connectat al contenidor de blobs: ${CONTAINER_NAME}`);
+        let containerSasUrl = URL_SAS_BLOB.trim();
+        
+        // Si la URL no conté ja els paràmetres SAS (?) i s'ha especificat un TOKEN_SAS_BLOB per separat
+        if (!containerSasUrl.includes('?') && TOKEN_SAS_BLOB) {
+            let sasToken = TOKEN_SAS_BLOB.trim();
+            if (sasToken && !sasToken.startsWith('?')) {
+                sasToken = '?' + sasToken;
+            }
+            containerSasUrl = `${containerSasUrl}${sasToken}`;
+        }
+        
+        containerClient = new ContainerClient(containerSasUrl);
+        console.log(`[☁️ AZURE STORAGE] Connectat correctament al Blob Storage d'Azure (amb firma SAS).`);
     } catch (err) {
-        console.error(`[❌ AZURE STORAGE] Error al connectar amb Blob Storage:`, err.message);
+        console.error(`[❌ AZURE STORAGE] Error al connectar amb el Blob Storage:`, err.message);
     }
 } else {
-    console.log(`[💻 LOCAL STORAGE] No s'ha detectat la cadena de connexió d'Azure Blob Storage. L'aplicació funcionarà amb els fitxers locals.`);
+    console.log(`[💻 LOCAL STORAGE] No s'ha detectat URL_SAS_BLOB. L'aplicació funcionarà amb els fitxers locals.`);
+}
+
+// Funció per determinar el nom del blob (camí complet) a Azure Blob Storage
+function getBlobName(filename) {
+    if (filename === 'preguntes-caspractic.json') {
+        return 'caspractic/preguntes-caspractic.json';
+    }
+    if (filename === 'preguntes.json') {
+        return 'tests/preguntes.json';
+    }
+    return filename;
 }
 
 // Funcions asíncrones per llegir/escriure fitxers de preguntes amb fallback
@@ -30,19 +51,20 @@ async function readQuestions(filename) {
     const localPath = path.join(__dirname, filename);
     
     if (containerClient) {
+        const blobName = getBlobName(filename);
         try {
-            const blockBlobClient = containerClient.getBlockBlobClient(filename);
+            const blockBlobClient = containerClient.getBlockBlobClient(blobName);
             const exists = await blockBlobClient.exists();
             if (exists) {
                 const buffer = await blockBlobClient.downloadToBuffer();
                 const dataStr = buffer.toString('utf8');
                 return JSON.parse(dataStr);
             } else {
-                console.warn(`[☁️ AZURE STORAGE] El blob ${filename} no existeix a Azure. Retornant array buit.`);
+                console.warn(`[☁️ AZURE STORAGE] El blob ${blobName} no existeix a Azure. Retornant array buit.`);
                 return [];
             }
         } catch (err) {
-            console.error(`[❌ AZURE STORAGE] Error llegint blob ${filename} de Azure:`, err.message);
+            console.error(`[❌ AZURE STORAGE] Error llegint blob ${blobName} de Azure:`, err.message);
             return [];
         }
     }
@@ -63,12 +85,13 @@ async function writeQuestions(filename, data) {
     const dataStr = JSON.stringify(data, null, 2);
     
     if (containerClient) {
+        const blobName = getBlobName(filename);
         try {
-            const blockBlobClient = containerClient.getBlockBlobClient(filename);
+            const blockBlobClient = containerClient.getBlockBlobClient(blobName);
             await blockBlobClient.upload(dataStr, dataStr.length);
-            console.log(`[☁️ AZURE STORAGE] Blob ${filename} actualitzat amb èxit a Azure.`);
+            console.log(`[☁️ AZURE STORAGE] Blob ${blobName} actualitzat amb èxit a Azure.`);
         } catch (err) {
-            console.error(`[❌ AZURE STORAGE] Error al desar blob ${filename} a Azure:`, err.message);
+            console.error(`[❌ AZURE STORAGE] Error al desar blob ${blobName} a Azure:`, err.message);
         }
     }
     
