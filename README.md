@@ -15,6 +15,9 @@ Aquesta és una aplicació web avançada (WebApp) desenvolupada en Node.js i Exp
 * **Rendiment Global Públic Condicional (Màxima Privadesa)**:
   * Per defecte, cap visitant anònim pot veure les estadístiques ni els gràfics a la pàgina d'inici per mantenir la privadesa dels resultats.
   * Un cop l'estudiant (`user1`) inicia la seva sessió de forma segura, es revela dinàmicament la secció de rendiment a la pàgina principal carregant el gràfic de línia i barres de doble eix (`historicChartMenu`).
+* **Desament de Mètriques Automàtic i Històric de 8 Dies**:
+  * S'ha integrat el desament automàtic de les proves tan bon punt es finalitza el simulacre (`mostrarResultats()`), evitant qualsevol pèrdua de dades si l'estudiant torna al menú o tanca la pàgina.
+  * Els gràfics històrics d'estudi s'han redissenyat per mostrar els **darrers 8 dies** de forma contínua i cronològica, garantint que la **barra de més a la dreta representa sempre el dia actual**, facilitant la visualització de l'evolució diària de l'estudiant.
 * **Interfície Responsive i Centrada Premium**:
   * Es reestructura tot el cos del tauler de rendiment per a dispositius mòbils, forçant un flux vertical pur on totes les targetes (`.stat-card` i `.q-item-card`) s'apilen de manera impecable una a sota de les altres.
   * S'incorpora un límit d'amplada de **`1200px`** i centrat automàtic que genera uns marges simètrics elegants a l'esquerra i a la dreta en pantalles de sobretaula grans, mantenint el fons homogeni `#f8fafc`.
