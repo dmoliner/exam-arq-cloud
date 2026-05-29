@@ -294,12 +294,17 @@ function registrarAvaluacioFlashcard(esCorrecte) {
     respostes[indexActual] = document.getElementById('user-answer').value || "(Resposta en blanc)";
     respostesCorrectesArray[indexActual] = esCorrecte;
     
-    document.getElementById('self-assessment-container').classList.add('hidden');
-    document.getElementById('btn-seguent').classList.remove('hidden');
-    
     // Actualitzar progrés visual de la barra superior
     const percentatge = ((indexActual + 1) / examen.length) * 100;
     document.getElementById('progress-bar-fill').style.width = `${percentatge}%`;
+
+    // Avançar directament a la següent pregunta sense passar pel botó "Següent"
+    if (indexActual < examen.length - 1) {
+        indexActual++;
+        carregar();
+    } else {
+        mostrarResultats();
+    }
 }
 
 // Funció per carregar de forma asíncrona les preguntes del fitxer JSON i inicialitzar el test
