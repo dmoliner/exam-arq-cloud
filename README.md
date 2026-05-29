@@ -71,6 +71,18 @@ Obre el teu navegador i accedeix a:
 
 ---
 
+## 💾 Preparació del Banc de Preguntes en Local
+
+Atès que els fitxers de dades de preguntes no es pugen al repositori Git per seguretat i privadesa (estan definits al `.gitignore`), per a poder utilitzar el simulador correctament en un entorn d'execució local, **és necessari crear manualment els següents fitxers a l'arrel del projecte**:
+
+1. **`preguntes.json`**: Document amb les preguntes del simulador de test.
+2. **`preguntes-caspractic.json`**: Document amb les preguntes i estructures del cas pràctic.
+
+> [!NOTE]
+> Quan l'aplicació es desplega a Azure WebApp, si està configurat el Blob Storage, el backend utilitzarà directament la connexió de blobs en lloc dels fitxers locals.
+
+---
+
 ## 🔒 Variables d'Entorn Requerides (Azure WebApp)
 
 Per al correcte funcionament de l'aplicació un cop estigui desplegada a l'entorn de Microsoft Azure, recorda configurar les següents claus dins dels *Configuration Settings* de la teva App Service:
