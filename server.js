@@ -41,7 +41,7 @@ function getBlobName(filename) {
         return 'caspractic/preguntes-caspractic.json';
     }
     if (filename === 'preguntes.json') {
-        return 'test/preguntes.json';
+        return 'tests/preguntes.json';
     }
     return filename;
 }
