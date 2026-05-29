@@ -50,19 +50,11 @@ async function readQuestions(filename) {
                 const dataStr = await streamToString(downloadBlockBlobResponse.readableStreamBody);
                 return JSON.parse(dataStr);
             } else {
-                console.warn(`[☁️ AZURE STORAGE] El blob ${filename} no existeix a Azure. Intentant inicialitzar amb el disc local...`);
-                if (fs.existsSync(localPath)) {
-                    const localData = JSON.parse(fs.readFileSync(localPath, 'utf8'));
-                    await writeQuestions(filename, localData);
-                    return localData;
-                }
+                console.warn(`[☁️ AZURE STORAGE] El blob ${filename} no existeix a Azure. Retornant array buit.`);
                 return [];
             }
         } catch (err) {
             console.error(`[❌ AZURE STORAGE] Error llegint blob ${filename} de Azure:`, err.message);
-            if (fs.existsSync(localPath)) {
-                return JSON.parse(fs.readFileSync(localPath, 'utf8'));
-            }
             return [];
         }
     }
