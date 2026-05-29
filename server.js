@@ -1,28 +1,33 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const { BlobServiceClient } = require('@azure/storage-blob');
+const { ContainerClient } = require('@azure/storage-blob');
 const app = express();
 
 const PORT = process.env.PORT || 3001;
 
 const statsFilePath = path.join(__dirname, 'stats.json');
 
-// Configurar Azure Blob Storage
-const AZURE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
-const CONTAINER_NAME = process.env.AZURE_STORAGE_CONTAINER_NAME || 'exams-cloud';
+// Configurar Azure Blob Storage mitjançant URL i Token SAS obtinguts de les variables d'entorn
+const URL_SAS_BLOB = process.env.URL_SAS_BLOB;
+const TOKEN_SAS_BLOB = process.env.TOKEN_SAS_BLOB;
 
 let containerClient = null;
-if (AZURE_CONNECTION_STRING) {
+if (URL_SAS_BLOB && TOKEN_SAS_BLOB) {
     try {
-        const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_CONNECTION_STRING);
-        containerClient = blobServiceClient.getContainerClient(CONTAINER_NAME);
-        console.log(`[☁️ AZURE STORAGE] Connectat al contenidor de blobs: ${CONTAINER_NAME}`);
+        let sasToken = TOKEN_SAS_BLOB.trim();
+        if (sasToken && !sasToken.startsWith('?')) {
+            sasToken = '?' + sasToken;
+        }
+        // Combinar la URL base del contenidor i el token SAS amb format correcte
+        const containerSasUrl = `${URL_SAS_BLOB.trim()}${sasToken}`;
+        containerClient = new ContainerClient(containerSasUrl);
+        console.log(`[☁️ AZURE STORAGE] Connectat correctament al Blob Storage mitjançant URL i Token SAS.`);
     } catch (err) {
-        console.error(`[❌ AZURE STORAGE] Error al connectar amb Blob Storage:`, err.message);
+        console.error(`[❌ AZURE STORAGE] Error al connectar amb el Blob Storage mitjançant SAS:`, err.message);
     }
 } else {
-    console.log(`[💻 LOCAL STORAGE] No s'ha detectat la cadena de connexió d'Azure Blob Storage. L'aplicació funcionarà amb els fitxers locals.`);
+    console.log(`[💻 LOCAL STORAGE] No s'han detectat URL_SAS_BLOB i TOKEN_SAS_BLOB. L'aplicació funcionarà amb els fitxers locals.`);
 }
 
 // Funció per determinar el nom del blob (camí complet) a Azure Blob Storage
