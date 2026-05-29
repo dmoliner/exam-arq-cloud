@@ -1,6 +1,6 @@
 # Simulador de Proves per al Perfil d'Arquitecte Cloud
 
-Aquesta és una aplicació web avançada (WebApp) desenvolupada en Node.js i Express per a la preparació de les proves teoricopràctiques d'arquitectura Cloud de la Borsa de la Diputació de Barcelona. Permet als candidats posar a prova els seus coneixements en serveis Cloud (especialment Microsoft Azure), dissenyar arquitectures ubiquitzades i analitzar el seu progrés mitjançant mètriques interactives.
+Aquesta és una aplicació web avançada (WebApp) desenvolupada en Node.js i Express per a la preparació de les proves teoricopràctiques d'arquitectura Cloud. Permet als candidats posar a prova els seus coneixements en serveis Cloud (especialment Microsoft Azure), dissenyar arquitectures i analitzar el seu progrés mitjançant mètriques interactives.
 
 ---
 
@@ -68,6 +68,18 @@ $env:user_admin="admin"; $env:pass_admin="admin123"; $env:user1="user1"; $env:pa
 
 Obre el teu navegador i accedeix a:
 👉 [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 💾 Preparació del Banc de Preguntes en Local
+
+Atès que els fitxers de dades de preguntes no es pugen al repositori Git per seguretat i privadesa (estan definits al `.gitignore`), per a poder utilitzar el simulador correctament en un entorn d'execució local, **és necessari crear manualment els següents fitxers a l'arrel del projecte**:
+
+1. **`preguntes.json`**: Document amb les preguntes del simulador de test.
+2. **`preguntes-caspractic.json`**: Document amb les preguntes i estructures del cas pràctic.
+
+> [!NOTE]
+> Quan l'aplicació es desplega a Azure WebApp, si està configurat el Blob Storage, el backend utilitzarà directament la connexió de blobs en lloc dels fitxers locals.
 
 ---
 
