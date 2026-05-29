@@ -108,6 +108,9 @@
     </section>
 
     <script>
+        let paginaActualHistoric = 0;
+        let globalChartInstance = null;
+        
         // Funció per llegir cookies del navegador
         function getCookie(name) {
             const value = `; ${document.cookie}`;
@@ -217,16 +220,48 @@
             }
         }
 
-        // Funció per dibuixar el gràfic de doble eix (Chart.js)
         function dibuixarGraficGlobal(stats) {
-            const ctx = document.getElementById('rendimentGlobalChart').getContext('2d');
+            const canvas = document.getElementById('rendimentGlobalChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
             
-            // Generem els últims 8 dies per a l'eix X de forma contínua, acabant avui
+            if (globalChartInstance) globalChartInstance.destroy();
+            
+            // Configurar els controls de navegació dinàmics
+            const container = canvas.parentElement;
+            let nav = container.querySelector('.historic-nav');
+            if (!nav) {
+                nav = document.createElement('div');
+                nav.className = 'historic-nav';
+                container.insertBefore(nav, canvas);
+            }
+            
+            const titolPagina = paginaActualHistoric === 0 ? "Darrers 5 dies" : `Fa ${paginaActualHistoric * 5}-${(paginaActualHistoric * 5) + 4} dies`;
+            nav.innerHTML = `
+                <button class="btn-historic-nav prev-btn" title="Anar més enrere">◀ Anteriors</button>
+                <span class="historic-nav-title">${titolPagina}</span>
+                <button class="btn-historic-nav next-btn" title="Anar cap a avui" ${paginaActualHistoric === 0 ? 'disabled' : ''}>Posteriors ▶</button>
+            `;
+            
+            nav.querySelector('.prev-btn').onclick = () => {
+                paginaActualHistoric++;
+                dibuixarGraficGlobal(stats);
+            };
+            
+            nav.querySelector('.next-btn').onclick = () => {
+                if (paginaActualHistoric > 0) {
+                    paginaActualHistoric--;
+                    dibuixarGraficGlobal(stats);
+                }
+            };
+            
+            // Generem els últims 5 dies segons la pàgina de paginació activa
             const datesOrdenades = [];
             const avui = new Date();
-            for (let i = 7; i >= 0; i--) {
+            const startOffset = paginaActualHistoric * 5;
+            for (let i = 4; i >= 0; i--) {
                 const d = new Date();
-                d.setDate(avui.getDate() - i);
+                d.setDate(avui.getDate() - (startOffset + i));
                 const yyyy = d.getFullYear();
                 const mm = String(d.getMonth() + 1).padStart(2, '0');
                 const dd = String(d.getDate()).padStart(2, '0');
@@ -247,7 +282,7 @@
             
             const dadesProves = datesOrdenades.map(d => stats[d] ? stats[d].provesFetes : 0);
             
-            new Chart(ctx, {
+            globalChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
