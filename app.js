@@ -131,6 +131,25 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('btn-encert').onclick = () => registrarAvaluacioFlashcard(true);
     document.getElementById('btn-error').onclick = () => registrarAvaluacioFlashcard(false);
+
+    // Detecció de doble pulsació de l'Intro (Enter) a la textarea per mostrar la solució automàticament
+    let darrerEnterTime = 0;
+    const userAnswerTextarea = document.getElementById('user-answer');
+    if (userAnswerTextarea) {
+        userAnswerTextarea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const ara = Date.now();
+                if (ara - darrerEnterTime < 400) {
+                    e.preventDefault(); // Evita afegir el segon salt de línia a la textarea
+                    const btnComprovar = document.getElementById('btn-comprovar');
+                    if (btnComprovar && !btnComprovar.classList.contains('hidden')) {
+                        btnComprovar.click();
+                    }
+                }
+                darrerEnterTime = ara;
+            }
+        });
+    }
 });
 
 // Funcions auxiliars per al Verificador Automàtic de Paraules Clau (Strict & Bigram Mode)
@@ -294,12 +313,17 @@ function registrarAvaluacioFlashcard(esCorrecte) {
     respostes[indexActual] = document.getElementById('user-answer').value || "(Resposta en blanc)";
     respostesCorrectesArray[indexActual] = esCorrecte;
     
-    document.getElementById('self-assessment-container').classList.add('hidden');
-    document.getElementById('btn-seguent').classList.remove('hidden');
-    
     // Actualitzar progrés visual de la barra superior
     const percentatge = ((indexActual + 1) / examen.length) * 100;
     document.getElementById('progress-bar-fill').style.width = `${percentatge}%`;
+
+    // Avançar directament a la següent pregunta sense passar pel botó "Següent"
+    if (indexActual < examen.length - 1) {
+        indexActual++;
+        carregar();
+    } else {
+        mostrarResultats();
+    }
 }
 
 // Funció per carregar de forma asíncrona les preguntes del fitxer JSON i inicialitzar el test
