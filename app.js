@@ -131,6 +131,25 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('btn-encert').onclick = () => registrarAvaluacioFlashcard(true);
     document.getElementById('btn-error').onclick = () => registrarAvaluacioFlashcard(false);
+
+    // Detecció de doble pulsació de l'Intro (Enter) a la textarea per mostrar la solució automàticament
+    let darrerEnterTime = 0;
+    const userAnswerTextarea = document.getElementById('user-answer');
+    if (userAnswerTextarea) {
+        userAnswerTextarea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const ara = Date.now();
+                if (ara - darrerEnterTime < 400) {
+                    e.preventDefault(); // Evita afegir el segon salt de línia a la textarea
+                    const btnComprovar = document.getElementById('btn-comprovar');
+                    if (btnComprovar && !btnComprovar.classList.contains('hidden')) {
+                        btnComprovar.click();
+                    }
+                }
+                darrerEnterTime = ara;
+            }
+        });
+    }
 });
 
 // Funcions auxiliars per al Verificador Automàtic de Paraules Clau (Strict & Bigram Mode)
