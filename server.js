@@ -25,24 +25,33 @@ if (AZURE_CONNECTION_STRING) {
     console.log(`[💻 LOCAL STORAGE] No s'ha detectat la cadena de connexió d'Azure Blob Storage. L'aplicació funcionarà amb els fitxers locals.`);
 }
 
+// Funció per determinar el nom del blob (camí complet) a Azure Blob Storage
+function getBlobName(filename) {
+    if (filename === 'preguntes-caspractic.json') {
+        return 'caspractic/preguntes-caspractic.json';
+    }
+    return filename;
+}
+
 // Funcions asíncrones per llegir/escriure fitxers de preguntes amb fallback
 async function readQuestions(filename) {
     const localPath = path.join(__dirname, filename);
     
     if (containerClient) {
+        const blobName = getBlobName(filename);
         try {
-            const blockBlobClient = containerClient.getBlockBlobClient(filename);
+            const blockBlobClient = containerClient.getBlockBlobClient(blobName);
             const exists = await blockBlobClient.exists();
             if (exists) {
                 const buffer = await blockBlobClient.downloadToBuffer();
                 const dataStr = buffer.toString('utf8');
                 return JSON.parse(dataStr);
             } else {
-                console.warn(`[☁️ AZURE STORAGE] El blob ${filename} no existeix a Azure. Retornant array buit.`);
+                console.warn(`[☁️ AZURE STORAGE] El blob ${blobName} no existeix a Azure. Retornant array buit.`);
                 return [];
             }
         } catch (err) {
-            console.error(`[❌ AZURE STORAGE] Error llegint blob ${filename} de Azure:`, err.message);
+            console.error(`[❌ AZURE STORAGE] Error llegint blob ${blobName} de Azure:`, err.message);
             return [];
         }
     }
@@ -63,12 +72,13 @@ async function writeQuestions(filename, data) {
     const dataStr = JSON.stringify(data, null, 2);
     
     if (containerClient) {
+        const blobName = getBlobName(filename);
         try {
-            const blockBlobClient = containerClient.getBlockBlobClient(filename);
+            const blockBlobClient = containerClient.getBlockBlobClient(blobName);
             await blockBlobClient.upload(dataStr, dataStr.length);
-            console.log(`[☁️ AZURE STORAGE] Blob ${filename} actualitzat amb èxit a Azure.`);
+            console.log(`[☁️ AZURE STORAGE] Blob ${blobName} actualitzat amb èxit a Azure.`);
         } catch (err) {
-            console.error(`[❌ AZURE STORAGE] Error al desar blob ${filename} a Azure:`, err.message);
+            console.error(`[❌ AZURE STORAGE] Error al desar blob ${blobName} a Azure:`, err.message);
         }
     }
     
