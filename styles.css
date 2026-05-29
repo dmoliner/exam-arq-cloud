@@ -407,6 +407,57 @@ button:hover .icon-right {
     margin: 1.5rem 0;
 }
 
+/* Navegació de l'Històric Paginat */
+.historic-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0 0.25rem;
+}
+
+.historic-nav-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #475569;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 0.3rem 0.95rem;
+    border-radius: 9999px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.btn-historic-nav {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    min-height: auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-historic-nav:hover:not(:disabled) {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #94a3b8;
+    transform: scale(1.04);
+}
+
+.btn-historic-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
 /* Responsive Rules */
 @media (max-width: 600px) {
     body {
