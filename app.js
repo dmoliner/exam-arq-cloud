@@ -379,8 +379,16 @@ function dibuixarDiari(canvasId, stats) {
     }
     if (window[instanceKey]) window[instanceKey].destroy();
     
-    const datesOrdenades = Object.keys(stats).sort();
-    if (datesOrdenades.length === 0) return;
+    const datesOrdenades = [];
+    const avui = new Date();
+    for (let i = 7; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(avui.getDate() - i);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        datesOrdenades.push(`${yyyy}-${mm}-${dd}`);
+    }
     
     // Convertim dates "YYYY-MM-DD" a format "DD/M" (ex: 23/5)
     const labels = datesOrdenades.map(d => {
@@ -391,10 +399,11 @@ function dibuixarDiari(canvasId, stats) {
     // Dades per al gràfic
     const dadesPercentatge = datesOrdenades.map(d => {
         const dayStats = stats[d];
+        if (!dayStats) return 0;
         return dayStats.preguntesTotals > 0 ? (dayStats.encertsTotals / dayStats.preguntesTotals) * 100 : 0;
     });
     
-    const dadesProves = datesOrdenades.map(d => stats[d].provesFetes);
+    const dadesProves = datesOrdenades.map(d => stats[d] ? stats[d].provesFetes : 0);
     
     window[instanceKey] = new Chart(ctx, {
         type: 'bar', // Tipus de base
@@ -546,23 +555,6 @@ function dibuixarDiari(canvasId, stats) {
 }
 
 async function novaProva() {
-    const stats = await obtenirStatsDiaries();
-    const avui = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
-    
-    if (!stats[avui]) {
-        stats[avui] = {
-            provesFetes: 0,
-            encertsTotals: 0,
-            preguntesTotals: 0
-        };
-    }
-    
-    const encerts = respostesCorrectesArray.filter(v => v).length;
-    stats[avui].provesFetes += 1;
-    stats[avui].encertsTotals += encerts;
-    stats[avui].preguntesTotals += examen.length;
-    
-    await desarStatsDiaries(stats);
     location.reload();
 }
 
@@ -886,6 +878,32 @@ async function mostrarResultats() {
     document.getElementById('result-screen').style.display = 'block';
     document.getElementById('final-score').innerHTML = `Nota Final: <b>${((encerts / examen.length) * 10).toFixed(2)} / 10</b>`;
     dibuixar('donutChartFinal', encerts, examen.length);
+    
+    // Desa automàticament les estadístiques al servidor al finalitzar el test
+    try {
+        const stats = await obtenirStatsDiaries();
+        // Obtenir data local en format YYYY-MM-DD
+        const avuiObj = new Date();
+        const yyyy = avuiObj.getFullYear();
+        const mm = String(avuiObj.getMonth() + 1).padStart(2, '0');
+        const dd = String(avuiObj.getDate()).padStart(2, '0');
+        const avui = `${yyyy}-${mm}-${dd}`;
+        
+        if (!stats[avui]) {
+            stats[avui] = {
+                provesFetes: 0,
+                encertsTotals: 0,
+                preguntesTotals: 0
+            };
+        }
+        stats[avui].provesFetes += 1;
+        stats[avui].encertsTotals += encerts;
+        stats[avui].preguntesTotals += examen.length;
+        
+        await desarStatsDiaries(stats);
+    } catch (e) {
+        console.error("Error al desar les estadístiques automàticament:", e);
+    }
     
     // Calcular estadístiques per temes
     const estadistiquesTemes = {};

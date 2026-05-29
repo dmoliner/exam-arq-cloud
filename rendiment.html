@@ -221,8 +221,17 @@
         function dibuixarGraficGlobal(stats) {
             const ctx = document.getElementById('rendimentGlobalChart').getContext('2d');
             
-            // Ordenar dates cronològicament cap a endavant per al gràfic (esquerra a dreta)
-            const datesOrdenades = Object.keys(stats).sort();
+            // Generem els últims 8 dies per a l'eix X de forma contínua, acabant avui
+            const datesOrdenades = [];
+            const avui = new Date();
+            for (let i = 7; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(avui.getDate() - i);
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                datesOrdenades.push(`${yyyy}-${mm}-${dd}`);
+            }
             
             // Labels DD/MM
             const labels = datesOrdenades.map(d => {
@@ -232,10 +241,11 @@
             
             const dadesPercentatge = datesOrdenades.map(d => {
                 const dayStats = stats[d];
+                if (!dayStats) return 0;
                 return dayStats.preguntesTotals > 0 ? (dayStats.encertsTotals / dayStats.preguntesTotals) * 100 : 0;
             });
             
-            const dadesProves = datesOrdenades.map(d => stats[d].provesFetes);
+            const dadesProves = datesOrdenades.map(d => stats[d] ? stats[d].provesFetes : 0);
             
             new Chart(ctx, {
                 type: 'bar',
