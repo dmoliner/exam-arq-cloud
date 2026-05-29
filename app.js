@@ -4,8 +4,129 @@ let respostes = new Array(50).fill(null);
 let respostesCorrectesArray = new Array(50).fill(false);
 let currentMode = ''; // 'test' o 'flashcard'
 
+let darrerSyncTimestamp = 0;
+let isSyncing = false;
+
+// Funció per desar l'estat actual al servidor
+async function desarEstatSessio() {
+    if (examen.length === 0 || isSyncing) return; // No hi ha cap test actiu per desar o s'està sincronitzant des del servidor
+    
+    darrerSyncTimestamp = Date.now();
+    try {
+        await fetch('/api/sync-state', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                examen,
+                indexActual,
+                respostes,
+                respostesCorrectesArray,
+                currentMode,
+                timestamp: darrerSyncTimestamp
+            })
+        });
+    } catch (e) {
+        console.error("Error al desar l'estat de la sessió al servidor:", e);
+    }
+}
+
+// Funció per esborrar l'estat al servidor quan es finalitza o es torna al menú
+async function esborrarEstatSessio() {
+    try {
+        await fetch('/api/sync-state', {
+            method: 'DELETE'
+        });
+    } catch (e) {
+        console.error("Error al esborrar l'estat de la sessió:", e);
+    }
+}
+
+// Funció per sincronitzar l'estat des del servidor
+async function sincronitzarEstatServidor() {
+    if (isSyncing) return;
+    
+    try {
+        const sessioRes = await fetch('/api/session');
+        const sessioData = await sessioRes.json();
+        if (!sessioData.loggedIn || sessioData.role !== 'student') return; // Només sincronitzem si és estudiant loguejat
+        
+        const res = await fetch('/api/sync-state');
+        if (res.status === 404) {
+            // Si el servidor no té estat però nosaltres tenim un test o cas pràctic actiu en curs en local, és que s'ha esborrat des de l'altre costat. Tornem al menú.
+            if (examen.length > 0) {
+                tornarAlMenuSenseSincronitzar();
+            }
+            return;
+        }
+        
+        if (res.ok) {
+            const serverState = await res.json();
+            
+            // Si el servidor té un estat que és més recent que el nostre darrer desament local
+            if (serverState.timestamp > darrerSyncTimestamp) {
+                isSyncing = true;
+                
+                // Actualitzar variables globals locals
+                examen = serverState.examen;
+                indexActual = serverState.indexActual;
+                respostes = serverState.respostes;
+                respostesCorrectesArray = serverState.respostesCorrectesArray;
+                currentMode = serverState.currentMode;
+                darrerSyncTimestamp = serverState.timestamp;
+                
+                // Assegurar-nos que els contenidors de pantalla estiguin ben configurats
+                document.getElementById('menu-container').classList.add('hidden');
+                document.getElementById('quiz-container').classList.remove('hidden');
+                document.getElementById('result-screen').classList.add('hidden');
+                document.getElementById('progres-screen').classList.add('hidden');
+                document.getElementById('quiz-title').innerText = currentMode === 'test' ? 'Tipus Test' : 'Cas Pràctic / Desenvolupament';
+                
+                // Carregar pregunta i reflectir l'estat a la interfície
+                carregar();
+                
+                // Si ja hi ha una resposta desada per a la pregunta actual en test, tornar a pintar-la (marcar opcions, mostrar justificació)
+                if (currentMode === 'test' && respostes[indexActual] !== null) {
+                    const optionsContainer = document.getElementById('options-container');
+                    const q = examen[indexActual];
+                    const selectedIdx = respostes[indexActual];
+                    
+                    if (optionsContainer && optionsContainer.children.length > selectedIdx) {
+                        const div = optionsContainer.children[selectedIdx];
+                        const radio = div.querySelector('input[type="radio"]');
+                        if (radio) radio.checked = true;
+                        
+                        const esCorrecte = (selectedIdx === q.respostaCorrecta);
+                        div.classList.add(esCorrecte ? 'correct' : 'incorrect');
+                        
+                        if (!esCorrecte) {
+                            optionsContainer.children[q.respostaCorrecta].classList.add('correct');
+                            optionsContainer.children[q.respostaCorrecta].querySelector('input[type="radio"]').checked = true;
+                        }
+                        
+                        document.getElementById('justificacio-text').innerText = q.justificacio;
+                        document.getElementById('justificacio-container').classList.remove('hidden');
+                        document.getElementById('justificacio-container').style.display = 'block';
+                    }
+                }
+                
+                isSyncing = false;
+            }
+        }
+    } catch (e) {
+        console.error("Error durant la sincronització de l'estat:", e);
+    }
+}
+
 // Esdeveniment inicial al carregar el DOM
 document.addEventListener('DOMContentLoaded', () => {
+    
+    // Intentar sincronització inicial i activar interval de consulta periòdica (polling cada 4s)
+    sincronitzarEstatServidor().then(() => {
+        setInterval(sincronitzarEstatServidor, 4000);
+    });
+
     
     // Comprovar estat de la sessió de l'usuari i rendiment condicional
     fetch('/api/session')
@@ -295,9 +416,15 @@ async function iniciarMode(mode) {
     document.getElementById('quiz-title').innerText = mode === 'test' ? 'Tipus Test' : 'Cas Pràctic / Desenvolupament';
     
     await inicialitzarExamen();
+    await desarEstatSessio(); // Desar estat immediatament en iniciar
 }
 
 function tornarAlMenu() {
+    tornarAlMenuSenseSincronitzar();
+    esborrarEstatSessio(); // Esborrar estat del servidor de manera activa
+}
+
+function tornarAlMenuSenseSincronitzar() {
     examen = [];
     indexActual = 0;
     respostes = new Array(50).fill(null);
@@ -308,6 +435,7 @@ function tornarAlMenu() {
     document.getElementById('progres-screen').classList.add('hidden');
     document.getElementById('result-screen').classList.add('hidden');
 }
+
 
 function registrarAvaluacioFlashcard(esCorrecte) {
     respostes[indexActual] = document.getElementById('user-answer').value || "(Resposta en blanc)";
@@ -321,6 +449,7 @@ function registrarAvaluacioFlashcard(esCorrecte) {
     if (indexActual < examen.length - 1) {
         indexActual++;
         carregar();
+        desarEstatSessio(); // Desar l'estat del progrés actiu
     } else {
         mostrarResultats();
     }
@@ -886,6 +1015,8 @@ function carregar() {
                     // Actualitzar progrés de barra en marcar
                     const pctMarcat = ((indexActual + 1) / examen.length) * 100;
                     document.getElementById('progress-bar-fill').style.width = `${pctMarcat}%`;
+                    
+                    desarEstatSessio(); // Desar estat immediatament en respondre
                 };
                 optionsContainer.appendChild(div);
             });
@@ -905,7 +1036,11 @@ function carregar() {
 
 document.getElementById('btn-seguent').onclick = () => {
     if (respostes[indexActual] === null) return alert("Has de seleccionar una resposta.");
-    if (indexActual < examen.length - 1) { indexActual++; carregar(); }
+    if (indexActual < examen.length - 1) { 
+        indexActual++; 
+        carregar(); 
+        desarEstatSessio(); // Desar estat en passar a la següent pregunta
+    }
     else { mostrarResultats(); }
 };
 
@@ -917,6 +1052,8 @@ async function mostrarResultats() {
     document.getElementById('result-screen').style.display = 'block';
     document.getElementById('final-score').innerHTML = `Nota Final: <b>${((encerts / examen.length) * 10).toFixed(2)} / 10</b>`;
     dibuixar('donutChartFinal', encerts, examen.length);
+    
+    esborrarEstatSessio(); // El test ha finalitzat, esborrem l'estat actiu del servidor
     
     // Desa automàticament les estadístiques al servidor al finalitzar el test (només si l'usuari està autenticat)
     try {
