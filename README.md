@@ -1,6 +1,6 @@
 # Simulador de Proves per al Perfil d'Arquitecte Cloud
 
-Aquesta és una aplicació web avançada (WebApp) desenvolupada en Node.js i Express per a la preparació de les proves teoricopràctiques d'arquitectura Cloud de la Borsa de la Diputació de Barcelona. Permet als candidats posar a prova els seus coneixements en serveis Cloud (especialment Microsoft Azure), dissenyar arquitectures ubiquitzades i analitzar el seu progrés mitjançant mètriques interactives.
+Aquesta és una aplicació web avançada (WebApp) desenvolupada en Node.js i Express per a la preparació de les proves teoricopràctiques d'arquitectura Cloud. Permet als candidats posar a prova els seus coneixements en serveis Cloud (especialment Microsoft Azure), dissenyar arquitectures i analitzar el seu progrés mitjançant mètriques interactives.
 
 ---
 
